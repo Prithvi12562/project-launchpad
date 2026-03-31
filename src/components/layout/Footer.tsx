@@ -1,4 +1,4 @@
-import { Hotel } from "lucide-react";
+import { Crown } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -7,14 +7,14 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <Hotel className="h-4 w-4 text-primary-foreground" />
+              <Crown className="h-4 w-4 text-primary-foreground" />
             </div>
             <span className="text-lg font-heading font-bold text-foreground">
-              HotelSite <span className="text-accent">AI</span>
+              Royal Plaza <span className="text-accent">Hotels</span>
             </span>
           </div>
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} HotelSite AI. Built for Indian hotels.
+            © {new Date().getFullYear()} Royal Plaza Hotels. Luxury Stay in Barara.
           </p>
         </div>
       </div>
