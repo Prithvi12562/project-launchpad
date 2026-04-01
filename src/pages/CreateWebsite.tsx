@@ -66,8 +66,8 @@ const CreateWebsite = () => {
       description:
         "Royal Plaza Hotels is a premium hotel offering comfortable rooms and a luxury experience for families, couples, travelers, and event guests. Located on Sadhaura Road, Barara, we provide top-class hospitality with modern amenities and warm service.",
       address: "Sadhaura Road, VPO Dhanaura, Barara, Ambala, Haryana, India",
-      phone: "",
-      email: "",
+      phone: "+91 8288808857",
+      email: "ranaabhishek1988@gmail.com",
       check_in: "12:00 PM",
       check_out: "12:00 PM",
       amenities: ["Free WiFi", "Swimming Pool", "AC Rooms", "Restaurant", "Room Service", "Good Food"],
