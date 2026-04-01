@@ -38,6 +38,57 @@ export type Database = {
         }
         Relationships: []
       }
+      websites: {
+        Row: {
+          address: string | null
+          amenities: Json | null
+          created_at: string
+          description: string | null
+          email: string | null
+          id: string
+          landmarks: Json | null
+          name: string
+          phone: string | null
+          room_types: Json | null
+          status: string
+          tagline: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          amenities?: Json | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          id?: string
+          landmarks?: Json | null
+          name?: string
+          phone?: string | null
+          room_types?: Json | null
+          status?: string
+          tagline?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          amenities?: Json | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          id?: string
+          landmarks?: Json | null
+          name?: string
+          phone?: string | null
+          room_types?: Json | null
+          status?: string
+          tagline?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
