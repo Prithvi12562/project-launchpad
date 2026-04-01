@@ -16,17 +16,18 @@ import {
   Form, FormControl, FormField, FormItem, FormLabel, FormMessage,
 } from "@/components/ui/form";
 import {
-  Hotel, Sparkles, BedDouble, Phone, MapPin, Plus, Trash2, ArrowLeft, Loader2, Star,
+  Hotel, Sparkles, BedDouble, Phone, MapPin, Plus, Trash2, ArrowLeft, Loader2, Star, Clock,
 } from "lucide-react";
 
 const AMENITY_OPTIONS = [
-  "WiFi", "AC Rooms", "Swimming Pool", "Restaurant", "Parking", "Banquet Hall",
-  "Gym", "Spa", "Room Service", "Laundry", "Bar", "Garden",
+  "Free WiFi", "AC Rooms", "Swimming Pool", "Restaurant", "Parking", "Banquet Hall",
+  "Gym", "Spa", "Room Service", "Laundry", "Bar", "Good Food",
 ];
 
 const roomSchema = z.object({
   name: z.string().min(1, "Room name is required").max(100),
   description: z.string().max(500).optional(),
+  price: z.string().max(20).optional(),
   best_seller: z.boolean().default(false),
 });
 
@@ -42,6 +43,8 @@ const formSchema = z.object({
   address: z.string().max(500).optional(),
   phone: z.string().max(20).optional(),
   email: z.string().email("Invalid email").max(255).optional().or(z.literal("")),
+  check_in: z.string().max(20).optional(),
+  check_out: z.string().max(20).optional(),
   amenities: z.array(z.string()),
   room_types: z.array(roomSchema).min(1, "Add at least one room type"),
   landmarks: z.array(landmarkSchema),
@@ -58,15 +61,24 @@ const CreateWebsite = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      tagline: "",
-      description: "",
-      address: "",
+      name: "Royal Plaza Hotels",
+      tagline: "Where Luxury Meets Comfort",
+      description:
+        "Royal Plaza Hotels is a premium hotel offering comfortable rooms and a luxury experience for families, couples, travelers, and event guests. Located on Sadhaura Road, Barara, we provide top-class hospitality with modern amenities and warm service.",
+      address: "Sadhaura Road, VPO Dhanaura, Barara, Ambala, Haryana, India",
       phone: "",
       email: "",
-      amenities: [],
-      room_types: [{ name: "", description: "", best_seller: false }],
-      landmarks: [],
+      check_in: "12:00 PM",
+      check_out: "12:00 PM",
+      amenities: ["Free WiFi", "Swimming Pool", "AC Rooms", "Restaurant", "Room Service", "Good Food"],
+      room_types: [
+        { name: "Deluxe Room", description: "AC room with attached bathroom, TV, and all modern facilities", price: "₹1,500", best_seller: false },
+        { name: "Super Deluxe Room", description: "Premium AC room with swimming pool access, attached bathroom, TV, and luxury amenities", price: "₹4,500", best_seller: true },
+      ],
+      landmarks: [
+        { name: "Dhanaura Bus Stand", distance: "200m" },
+        { name: "Prachin Hanuman Mandir", distance: "500m" },
+      ],
     },
   });
 
@@ -86,7 +98,11 @@ const CreateWebsite = () => {
         phone: values.phone || null,
         email: values.email || null,
         amenities: values.amenities as unknown as any,
-        room_types: values.room_types as unknown as any,
+        room_types: values.room_types.map((r) => ({
+          ...r,
+          check_in: values.check_in,
+          check_out: values.check_out,
+        })) as unknown as any,
         landmarks: values.landmarks as unknown as any,
         status: "draft",
       }).select().single();
@@ -161,7 +177,7 @@ const CreateWebsite = () => {
                     <FormField control={form.control} name="tagline" render={({ field }) => (
                       <FormItem>
                         <FormLabel>Tagline</FormLabel>
-                        <FormControl><Input placeholder="Luxury Stay in Barara" {...field} /></FormControl>
+                        <FormControl><Input placeholder="Where Luxury Meets Comfort" {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )} />
@@ -226,7 +242,7 @@ const CreateWebsite = () => {
                     <CardTitle className="text-lg flex items-center justify-between">
                       Room Types
                       <Button type="button" variant="outline" size="sm"
-                        onClick={() => roomFields.append({ name: "", description: "", best_seller: false })}>
+                        onClick={() => roomFields.append({ name: "", description: "", price: "", best_seller: false })}>
                         <Plus className="h-4 w-4 mr-1" /> Add Room
                       </Button>
                     </CardTitle>
@@ -255,6 +271,13 @@ const CreateWebsite = () => {
                             <FormMessage />
                           </FormItem>
                         )} />
+                        <FormField control={form.control} name={`room_types.${index}.price`} render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Price per Night</FormLabel>
+                            <FormControl><Input placeholder="₹1,500" {...field} /></FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )} />
                         <FormField control={form.control} name={`room_types.${index}.best_seller`} render={({ field }) => (
                           <FormItem className="flex items-center gap-2 space-y-0">
                             <FormControl>
@@ -280,7 +303,7 @@ const CreateWebsite = () => {
               <TabsContent value="contact">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">Contact Information</CardTitle>
+                    <CardTitle className="text-lg">Contact & Timings</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <FormField control={form.control} name="address" render={({ field }) => (
@@ -304,6 +327,26 @@ const CreateWebsite = () => {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl><Input placeholder="info@royalplaza.com" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField control={form.control} name="check_in" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-1">
+                            <Clock className="h-3.5 w-3.5" /> Check-in Time
+                          </FormLabel>
+                          <FormControl><Input placeholder="12:00 PM" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={form.control} name="check_out" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-1">
+                            <Clock className="h-3.5 w-3.5" /> Check-out Time
+                          </FormLabel>
+                          <FormControl><Input placeholder="12:00 PM" {...field} /></FormControl>
                           <FormMessage />
                         </FormItem>
                       )} />
