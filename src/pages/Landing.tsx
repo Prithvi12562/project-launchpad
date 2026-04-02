@@ -1,10 +1,14 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Wifi, Wind, Waves, UtensilsCrossed, Car, Building2, Star,
-  Phone, Mail, MapPin, Clock, ChevronDown,
+  Phone, Mail, MapPin, Clock, ChevronDown, Send,
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import exteriorImg from "@/assets/hotel/exterior.jpg";
 import roomImg from "@/assets/hotel/room.jpg";
 import room2Img from "@/assets/hotel/room2.jpg";
@@ -22,6 +26,7 @@ const NAV_LINKS = [
   { label: "Rooms", href: "#rooms" },
   { label: "Amenities", href: "#amenities" },
   { label: "Gallery", href: "#gallery" },
+  { label: "Booking", href: "#booking" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -46,8 +51,35 @@ const GALLERY_IMAGES = [
 ];
 
 const Landing = () => {
+  const { toast } = useToast();
+  const [bookingSubmitting, setBookingSubmitting] = useState(false);
+  const [bookingForm, setBookingForm] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    roomType: "Deluxe Room",
+    checkIn: "",
+    checkOut: "",
+  });
+
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleBooking = async () => {
+    if (!bookingForm.name || !bookingForm.phone || !bookingForm.checkIn || !bookingForm.checkOut) {
+      toast({ title: "Please fill all required fields", variant: "destructive" });
+      return;
+    }
+    setBookingSubmitting(true);
+    try {
+      // TODO: Send booking email via edge function
+      await new Promise((r) => setTimeout(r, 1000));
+      toast({ title: "Booking request sent!", description: "We'll contact you shortly to confirm." });
+      setBookingForm({ name: "", phone: "", email: "", roomType: "Deluxe Room", checkIn: "", checkOut: "" });
+    } finally {
+      setBookingSubmitting(false);
+    }
   };
 
   return (
@@ -248,6 +280,68 @@ const Landing = () => {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ─── Booking ─── */}
+      <section id="booking" className="px-4 py-20">
+        <div className="max-w-2xl mx-auto space-y-10">
+          <div className="text-center space-y-3">
+            <p className="uppercase tracking-[0.2em] text-sm font-medium text-accent">Reservation</p>
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground">
+              Book Your Stay
+            </h2>
+            <p className="text-muted-foreground">Fill in the details and we'll get back to you shortly.</p>
+          </div>
+          <Card className="border-border">
+            <CardContent className="p-6 md:p-8 space-y-5">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="b-name">Full Name</Label>
+                  <Input id="b-name" placeholder="Your name" value={bookingForm.name} onChange={(e) => setBookingForm({ ...bookingForm, name: e.target.value })} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="b-phone">Phone</Label>
+                  <Input id="b-phone" placeholder="+91 XXXXX XXXXX" value={bookingForm.phone} onChange={(e) => setBookingForm({ ...bookingForm, phone: e.target.value })} />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="b-email">Email</Label>
+                <Input id="b-email" type="email" placeholder="your@email.com" value={bookingForm.email} onChange={(e) => setBookingForm({ ...bookingForm, email: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="b-room">Room Type</Label>
+                <select
+                  id="b-room"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  value={bookingForm.roomType}
+                  onChange={(e) => setBookingForm({ ...bookingForm, roomType: e.target.value })}
+                >
+                  <option value="Deluxe Room">Deluxe Room — ₹1,500/night</option>
+                  <option value="Super Deluxe Room">Super Deluxe Room — ₹4,500/night</option>
+                </select>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="b-checkin">Check-in Date</Label>
+                  <Input id="b-checkin" type="date" value={bookingForm.checkIn} onChange={(e) => setBookingForm({ ...bookingForm, checkIn: e.target.value })} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="b-checkout">Check-out Date</Label>
+                  <Input id="b-checkout" type="date" value={bookingForm.checkOut} onChange={(e) => setBookingForm({ ...bookingForm, checkOut: e.target.value })} />
+                </div>
+              </div>
+              <Button
+                className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-semibold"
+                size="lg"
+                onClick={handleBooking}
+                disabled={bookingSubmitting}
+              >
+                <Send className="h-4 w-4 mr-2" />
+                {bookingSubmitting ? "Sending…" : "Send Booking Request"}
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
