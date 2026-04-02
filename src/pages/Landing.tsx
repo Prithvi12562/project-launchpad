@@ -52,6 +52,7 @@ const GALLERY_IMAGES = [
 
 const Landing = () => {
   const { toast } = useToast();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [bookingSubmitting, setBookingSubmitting] = useState(false);
   const [bookingForm, setBookingForm] = useState({
     name: "",
