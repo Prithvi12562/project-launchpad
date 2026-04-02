@@ -92,7 +92,7 @@ const Landing = () => {
           <span className="font-heading text-xl font-bold text-primary">
             Royal Plaza
           </span>
-          <ul className="hidden md:flex items-center gap-6">
+          <ul className="hidden lg:flex items-center gap-6">
             {NAV_LINKS.map((l) => (
               <li key={l.href}>
                 <button
@@ -104,10 +104,34 @@ const Landing = () => {
               </li>
             ))}
           </ul>
-          <Button asChild size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">
-            <Link to="/register">Book Now</Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button asChild size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">
+              <Link to="/register">Book Now</Link>
+            </Button>
+            <button
+              className="lg:hidden p-2 text-foreground"
+              onClick={() => setMobileNavOpen(!mobileNavOpen)}
+              aria-label="Toggle menu"
+            >
+              {mobileNavOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile nav dropdown */}
+        {mobileNavOpen && (
+          <div className="lg:hidden border-t border-border bg-background px-4 py-4 space-y-1 animate-fade-in">
+            {NAV_LINKS.map((l) => (
+              <button
+                key={l.href}
+                onClick={() => scrollTo(l.href.slice(1))}
+                className="block w-full text-left px-3 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:text-primary hover:bg-secondary/50 transition-colors"
+              >
+                {l.label}
+              </button>
+            ))}
+          </div>
+        )}
       </nav>
 
       {/* ─── Hero ─── */}
