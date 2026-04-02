@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Wifi, Wind, Waves, UtensilsCrossed, Car, Building2, Star,
-  Phone, Mail, MapPin, Clock, ChevronDown, Send,
+  Phone, Mail, MapPin, Clock, ChevronDown, Send, Menu, X,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import exteriorImg from "@/assets/hotel/exterior.jpg";
@@ -52,6 +52,7 @@ const GALLERY_IMAGES = [
 
 const Landing = () => {
   const { toast } = useToast();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [bookingSubmitting, setBookingSubmitting] = useState(false);
   const [bookingForm, setBookingForm] = useState({
     name: "",
@@ -64,6 +65,7 @@ const Landing = () => {
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setMobileNavOpen(false);
   };
 
   const handleBooking = async () => {
@@ -90,7 +92,7 @@ const Landing = () => {
           <span className="font-heading text-xl font-bold text-primary">
             Royal Plaza
           </span>
-          <ul className="hidden md:flex items-center gap-6">
+          <ul className="hidden lg:flex items-center gap-6">
             {NAV_LINKS.map((l) => (
               <li key={l.href}>
                 <button
@@ -102,10 +104,34 @@ const Landing = () => {
               </li>
             ))}
           </ul>
-          <Button asChild size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">
-            <Link to="/register">Book Now</Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button asChild size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">
+              <Link to="/register">Book Now</Link>
+            </Button>
+            <button
+              className="lg:hidden p-2 text-foreground"
+              onClick={() => setMobileNavOpen(!mobileNavOpen)}
+              aria-label="Toggle menu"
+            >
+              {mobileNavOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile nav dropdown */}
+        {mobileNavOpen && (
+          <div className="lg:hidden border-t border-border bg-background px-4 py-4 space-y-1 animate-fade-in">
+            {NAV_LINKS.map((l) => (
+              <button
+                key={l.href}
+                onClick={() => scrollTo(l.href.slice(1))}
+                className="block w-full text-left px-3 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:text-primary hover:bg-secondary/50 transition-colors"
+              >
+                {l.label}
+              </button>
+            ))}
+          </div>
+        )}
       </nav>
 
       {/* ─── Hero ─── */}
@@ -392,12 +418,12 @@ const Landing = () => {
 
       {/* ─── Footer ─── */}
       <footer className="border-t border-border bg-card px-4 py-10">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="text-center md:text-left">
+        <div className="max-w-6xl mx-auto flex flex-col items-center gap-8">
+          <div className="text-center">
             <h3 className="font-heading text-lg font-bold text-card-foreground">Royal Plaza Hotels</h3>
             <p className="text-sm text-muted-foreground">Where Luxury Meets Comfort</p>
           </div>
-          <ul className="flex items-center gap-6 text-sm text-muted-foreground">
+          <ul className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm text-muted-foreground">
             {NAV_LINKS.map((l) => (
               <li key={l.href}>
                 <button onClick={() => scrollTo(l.href.slice(1))} className="hover:text-primary transition-colors">
