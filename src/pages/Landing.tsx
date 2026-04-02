@@ -1,10 +1,14 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Wifi, Wind, Waves, UtensilsCrossed, Car, Building2, Star,
-  Phone, Mail, MapPin, Clock, ChevronDown,
+  Phone, Mail, MapPin, Clock, ChevronDown, Send,
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import exteriorImg from "@/assets/hotel/exterior.jpg";
 import roomImg from "@/assets/hotel/room.jpg";
 import room2Img from "@/assets/hotel/room2.jpg";
