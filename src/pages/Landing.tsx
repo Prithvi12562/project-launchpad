@@ -22,6 +22,7 @@ const NAV_LINKS = [
   { label: "Rooms", href: "#rooms" },
   { label: "Amenities", href: "#amenities" },
   { label: "Gallery", href: "#gallery" },
+  { label: "Booking", href: "#booking" },
   { label: "Contact", href: "#contact" },
 ];
 
