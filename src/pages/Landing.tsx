@@ -418,12 +418,12 @@ const Landing = () => {
 
       {/* ─── Footer ─── */}
       <footer className="border-t border-border bg-card px-4 py-10">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="text-center md:text-left">
+        <div className="max-w-6xl mx-auto flex flex-col items-center gap-8">
+          <div className="text-center">
             <h3 className="font-heading text-lg font-bold text-card-foreground">Royal Plaza Hotels</h3>
             <p className="text-sm text-muted-foreground">Where Luxury Meets Comfort</p>
           </div>
-          <ul className="flex items-center gap-6 text-sm text-muted-foreground">
+          <ul className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm text-muted-foreground">
             {NAV_LINKS.map((l) => (
               <li key={l.href}>
                 <button onClick={() => scrollTo(l.href.slice(1))} className="hover:text-primary transition-colors">
