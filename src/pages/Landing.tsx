@@ -51,8 +51,35 @@ const GALLERY_IMAGES = [
 ];
 
 const Landing = () => {
+  const { toast } = useToast();
+  const [bookingSubmitting, setBookingSubmitting] = useState(false);
+  const [bookingForm, setBookingForm] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    roomType: "Deluxe Room",
+    checkIn: "",
+    checkOut: "",
+  });
+
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleBooking = async () => {
+    if (!bookingForm.name || !bookingForm.phone || !bookingForm.checkIn || !bookingForm.checkOut) {
+      toast({ title: "Please fill all required fields", variant: "destructive" });
+      return;
+    }
+    setBookingSubmitting(true);
+    try {
+      // TODO: Send booking email via edge function
+      await new Promise((r) => setTimeout(r, 1000));
+      toast({ title: "Booking request sent!", description: "We'll contact you shortly to confirm." });
+      setBookingForm({ name: "", phone: "", email: "", roomType: "Deluxe Room", checkIn: "", checkOut: "" });
+    } finally {
+      setBookingSubmitting(false);
+    }
   };
 
   return (
