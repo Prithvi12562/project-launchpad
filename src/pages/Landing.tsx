@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Wifi, Wind, Waves, UtensilsCrossed, Car, Building2, Star,
-  Phone, Mail, MapPin, Clock, ChevronDown, Send,
+  Phone, Mail, MapPin, Clock, ChevronDown, Send, Menu, X,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import exteriorImg from "@/assets/hotel/exterior.jpg";
