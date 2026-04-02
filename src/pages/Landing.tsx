@@ -65,6 +65,7 @@ const Landing = () => {
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setMobileNavOpen(false);
   };
 
   const handleBooking = async () => {
