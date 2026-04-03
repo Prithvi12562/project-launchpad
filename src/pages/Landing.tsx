@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import {
   Wifi, Wind, Waves, UtensilsCrossed, Car, Building2, Star,
   Phone, Mail, MapPin, Clock, ChevronDown, Send, Menu, X,
+  Minus, Plus, IndianRupee, QrCode, Copy, Check,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import exteriorImg from "@/assets/hotel/exterior.jpg";
@@ -50,22 +51,61 @@ const GALLERY_IMAGES = [
   { src: room2Img, alt: "Room View" },
 ];
 
+const ROOM_TYPES = [
+  { id: "deluxe", name: "Deluxe Room", price: 1500, image: roomImg, description: "AC room with attached bathroom, TV, and all modern facilities for a comfortable stay.", bestSeller: false },
+  { id: "super-deluxe", name: "Super Deluxe Room", price: 4500, image: room2Img, description: "Premium AC room with swimming pool access, attached bathroom, TV, and luxury amenities.", bestSeller: true },
+];
+
+const UPI_ID = "royalplazahotels@upi";
+
 const Landing = () => {
   const { toast } = useToast();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [bookingSubmitting, setBookingSubmitting] = useState(false);
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [upiCopied, setUpiCopied] = useState(false);
   const [bookingForm, setBookingForm] = useState({
     name: "",
     phone: "",
     email: "",
-    roomType: "Deluxe Room",
     checkIn: "",
     checkOut: "",
   });
+  const [roomCounts, setRoomCounts] = useState<Record<string, number>>({
+    deluxe: 0,
+    "super-deluxe": 0,
+  });
+
+  const updateRoomCount = (id: string, delta: number) => {
+    setRoomCounts((prev) => ({
+      ...prev,
+      [id]: Math.max(0, Math.min(10, (prev[id] || 0) + delta)),
+    }));
+  };
+
+  const nights = useMemo(() => {
+    if (!bookingForm.checkIn || !bookingForm.checkOut) return 0;
+    const diff = new Date(bookingForm.checkOut).getTime() - new Date(bookingForm.checkIn).getTime();
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+  }, [bookingForm.checkIn, bookingForm.checkOut]);
+
+  const totalRooms = Object.values(roomCounts).reduce((a, b) => a + b, 0);
+
+  const totalPrice = useMemo(() => {
+    return ROOM_TYPES.reduce((sum, room) => {
+      return sum + (roomCounts[room.id] || 0) * room.price * Math.max(1, nights);
+    }, 0);
+  }, [roomCounts, nights]);
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     setMobileNavOpen(false);
+  };
+
+  const copyUpi = async () => {
+    await navigator.clipboard.writeText(UPI_ID);
+    setUpiCopied(true);
+    setTimeout(() => setUpiCopied(false), 2000);
   };
 
   const handleBooking = async () => {
@@ -73,15 +113,28 @@ const Landing = () => {
       toast({ title: "Please fill all required fields", variant: "destructive" });
       return;
     }
+    if (totalRooms === 0) {
+      toast({ title: "Please select at least one room", variant: "destructive" });
+      return;
+    }
+    if (nights <= 0) {
+      toast({ title: "Check-out must be after check-in", variant: "destructive" });
+      return;
+    }
     setBookingSubmitting(true);
     try {
-      // TODO: Send booking email via edge function
       await new Promise((r) => setTimeout(r, 1000));
-      toast({ title: "Booking request sent!", description: "We'll contact you shortly to confirm." });
-      setBookingForm({ name: "", phone: "", email: "", roomType: "Deluxe Room", checkIn: "", checkOut: "" });
+      setBookingSuccess(true);
+      toast({ title: "Booking request sent!", description: "Complete payment via UPI below." });
     } finally {
       setBookingSubmitting(false);
     }
+  };
+
+  const resetBooking = () => {
+    setBookingSuccess(false);
+    setBookingForm({ name: "", phone: "", email: "", checkIn: "", checkOut: "" });
+    setRoomCounts({ deluxe: 0, "super-deluxe": 0 });
   };
 
   return (
@@ -105,8 +158,8 @@ const Landing = () => {
             ))}
           </ul>
           <div className="flex items-center gap-2">
-            <Button asChild size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">
-              <Link to="/register">Book Now</Link>
+            <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold" onClick={() => scrollTo("booking")}>
+              Book Now
             </Button>
             <button
               className="lg:hidden p-2 text-foreground"
@@ -118,7 +171,6 @@ const Landing = () => {
           </div>
         </div>
 
-        {/* Mobile nav dropdown */}
         {mobileNavOpen && (
           <div className="lg:hidden border-t border-border bg-background px-4 py-4 space-y-1 animate-fade-in">
             {NAV_LINKS.map((l) => (
@@ -157,8 +209,8 @@ const Landing = () => {
             Where Luxury Meets Comfort — premium rooms, exquisite dining, and warm hospitality on Sadhaura Road, Barara.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-            <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 px-10 text-base font-semibold">
-              <Link to="/register">Book Your Stay</Link>
+            <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 px-10 text-base font-semibold" onClick={() => scrollTo("booking")}>
+              Book Your Stay
             </Button>
             <Button
               variant="outline"
@@ -211,46 +263,31 @@ const Landing = () => {
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            {/* Deluxe Room */}
-            <Card className="overflow-hidden border-border hover:shadow-xl transition-shadow duration-300 group">
-              <div className="relative h-64 overflow-hidden">
-                <img src={roomImg} alt="Deluxe Room" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              </div>
-              <CardContent className="p-6 space-y-3">
-                <h3 className="text-xl font-heading font-bold text-card-foreground">Deluxe Room</h3>
-                <p className="text-muted-foreground text-sm">
-                  AC room with attached bathroom, TV, and all modern facilities for a comfortable stay.
-                </p>
-                <div className="flex items-center justify-between pt-2">
-                  <span className="text-2xl font-bold text-primary">₹1,500<span className="text-sm font-normal text-muted-foreground">/night</span></span>
-                  <Button asChild size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                    <Link to="/register">Book Now</Link>
-                  </Button>
+            {ROOM_TYPES.map((room) => (
+              <Card key={room.id} className={`overflow-hidden hover:shadow-xl transition-shadow duration-300 group relative ${room.bestSeller ? "border-accent/40" : "border-border"}`}>
+                {room.bestSeller && (
+                  <div className="absolute top-4 right-4 z-10 flex items-center gap-1 rounded-full bg-accent text-accent-foreground px-3 py-1 text-xs font-semibold">
+                    <Star className="h-3 w-3" /> Best Seller
+                  </div>
+                )}
+                <div className="relative h-64 overflow-hidden">
+                  <img src={room.image} alt={room.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Super Deluxe Room */}
-            <Card className="overflow-hidden border-accent/40 hover:shadow-xl transition-shadow duration-300 group relative">
-              <div className="absolute top-4 right-4 z-10 flex items-center gap-1 rounded-full bg-accent text-accent-foreground px-3 py-1 text-xs font-semibold">
-                <Star className="h-3 w-3" /> Best Seller
-              </div>
-              <div className="relative h-64 overflow-hidden">
-                <img src={room2Img} alt="Super Deluxe Room" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              </div>
-              <CardContent className="p-6 space-y-3">
-                <h3 className="text-xl font-heading font-bold text-card-foreground">Super Deluxe Room</h3>
-                <p className="text-muted-foreground text-sm">
-                  Premium AC room with swimming pool access, attached bathroom, TV, and luxury amenities.
-                </p>
-                <div className="flex items-center justify-between pt-2">
-                  <span className="text-2xl font-bold text-primary">₹4,500<span className="text-sm font-normal text-muted-foreground">/night</span></span>
-                  <Button asChild size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold">
-                    <Link to="/register">Book Now</Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                <CardContent className="p-6 space-y-3">
+                  <h3 className="text-xl font-heading font-bold text-card-foreground">{room.name}</h3>
+                  <p className="text-muted-foreground text-sm">{room.description}</p>
+                  <div className="flex items-center justify-between pt-2">
+                    <span className="text-2xl font-bold text-primary">
+                      ₹{room.price.toLocaleString("en-IN")}
+                      <span className="text-sm font-normal text-muted-foreground">/night</span>
+                    </span>
+                    <Button size="sm" className={room.bestSeller ? "bg-accent text-accent-foreground hover:bg-accent/90 font-semibold" : "bg-primary hover:bg-primary/90 text-primary-foreground"} onClick={() => { updateRoomCount(room.id, 1); scrollTo("booking"); }}>
+                      Book Now
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
@@ -317,57 +354,160 @@ const Landing = () => {
             <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground">
               Book Your Stay
             </h2>
-            <p className="text-muted-foreground">Fill in the details and we'll get back to you shortly.</p>
+            <p className="text-muted-foreground">Select rooms, fill in details, and pay via UPI.</p>
           </div>
-          <Card className="border-border">
-            <CardContent className="p-6 md:p-8 space-y-5">
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="b-name">Full Name</Label>
-                  <Input id="b-name" placeholder="Your name" value={bookingForm.name} onChange={(e) => setBookingForm({ ...bookingForm, name: e.target.value })} />
+
+          {!bookingSuccess ? (
+            <Card className="border-border">
+              <CardContent className="p-6 md:p-8 space-y-6">
+                {/* Room selection */}
+                <div className="space-y-4">
+                  <Label className="text-base font-semibold">Select Rooms</Label>
+                  {ROOM_TYPES.map((room) => (
+                    <div key={room.id} className="flex items-center justify-between rounded-lg border border-border p-4">
+                      <div className="space-y-0.5">
+                        <p className="font-medium text-card-foreground">{room.name}</p>
+                        <p className="text-sm text-primary font-semibold">₹{room.price.toLocaleString("en-IN")}/night</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => updateRoomCount(room.id, -1)}
+                          className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground hover:bg-secondary transition-colors disabled:opacity-30"
+                          disabled={!roomCounts[room.id]}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </button>
+                        <span className="w-6 text-center font-semibold text-foreground">{roomCounts[room.id] || 0}</span>
+                        <button
+                          type="button"
+                          onClick={() => updateRoomCount(room.id, 1)}
+                          className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground hover:bg-secondary transition-colors"
+                        >
+                          <Plus className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Guest details */}
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="b-name">Full Name *</Label>
+                    <Input id="b-name" placeholder="Your name" value={bookingForm.name} onChange={(e) => setBookingForm({ ...bookingForm, name: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="b-phone">Phone *</Label>
+                    <Input id="b-phone" placeholder="+91 XXXXX XXXXX" value={bookingForm.phone} onChange={(e) => setBookingForm({ ...bookingForm, phone: e.target.value })} />
+                  </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="b-phone">Phone</Label>
-                  <Input id="b-phone" placeholder="+91 XXXXX XXXXX" value={bookingForm.phone} onChange={(e) => setBookingForm({ ...bookingForm, phone: e.target.value })} />
+                  <Label htmlFor="b-email">Email</Label>
+                  <Input id="b-email" type="email" placeholder="your@email.com" value={bookingForm.email} onChange={(e) => setBookingForm({ ...bookingForm, email: e.target.value })} />
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="b-email">Email</Label>
-                <Input id="b-email" type="email" placeholder="your@email.com" value={bookingForm.email} onChange={(e) => setBookingForm({ ...bookingForm, email: e.target.value })} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="b-room">Room Type</Label>
-                <select
-                  id="b-room"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                  value={bookingForm.roomType}
-                  onChange={(e) => setBookingForm({ ...bookingForm, roomType: e.target.value })}
+
+                {/* Dates */}
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="b-checkin">Check-in Date *</Label>
+                    <Input id="b-checkin" type="date" value={bookingForm.checkIn} min={new Date().toISOString().split("T")[0]} onChange={(e) => setBookingForm({ ...bookingForm, checkIn: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="b-checkout">Check-out Date *</Label>
+                    <Input id="b-checkout" type="date" value={bookingForm.checkOut} min={bookingForm.checkIn || new Date().toISOString().split("T")[0]} onChange={(e) => setBookingForm({ ...bookingForm, checkOut: e.target.value })} />
+                  </div>
+                </div>
+
+                {/* Price summary */}
+                {totalRooms > 0 && (
+                  <div className="rounded-lg bg-secondary/50 p-4 space-y-2">
+                    <p className="text-sm font-medium text-foreground">Booking Summary</p>
+                    {ROOM_TYPES.map((room) =>
+                      roomCounts[room.id] > 0 ? (
+                        <div key={room.id} className="flex justify-between text-sm text-muted-foreground">
+                          <span>{roomCounts[room.id]} × {room.name} {nights > 0 ? `× ${nights} night${nights > 1 ? "s" : ""}` : ""}</span>
+                          <span>₹{(roomCounts[room.id] * room.price * Math.max(1, nights)).toLocaleString("en-IN")}</span>
+                        </div>
+                      ) : null
+                    )}
+                    <div className="border-t border-border pt-2 flex justify-between font-semibold text-foreground">
+                      <span>Total</span>
+                      <span className="flex items-center gap-1 text-primary">
+                        <IndianRupee className="h-4 w-4" />
+                        {totalPrice.toLocaleString("en-IN")}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                <Button
+                  className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-semibold"
+                  size="lg"
+                  onClick={handleBooking}
+                  disabled={bookingSubmitting}
                 >
-                  <option value="Deluxe Room">Deluxe Room — ₹1,500/night</option>
-                  <option value="Super Deluxe Room">Super Deluxe Room — ₹4,500/night</option>
-                </select>
-              </div>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="b-checkin">Check-in Date</Label>
-                  <Input id="b-checkin" type="date" value={bookingForm.checkIn} onChange={(e) => setBookingForm({ ...bookingForm, checkIn: e.target.value })} />
+                  <Send className="h-4 w-4 mr-2" />
+                  {bookingSubmitting ? "Sending…" : "Confirm & Pay via UPI"}
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            /* ─── UPI Payment Card ─── */
+            <Card className="border-accent/40">
+              <CardContent className="p-6 md:p-8 space-y-6 text-center">
+                <div className="flex items-center justify-center gap-2 text-accent">
+                  <Check className="h-6 w-6" />
+                  <h3 className="text-xl font-heading font-bold">Booking Confirmed!</h3>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="b-checkout">Check-out Date</Label>
-                  <Input id="b-checkout" type="date" value={bookingForm.checkOut} onChange={(e) => setBookingForm({ ...bookingForm, checkOut: e.target.value })} />
+                <p className="text-muted-foreground">
+                  Please complete your payment of{" "}
+                  <span className="font-bold text-primary">₹{totalPrice.toLocaleString("en-IN")}</span>{" "}
+                  via UPI to confirm your reservation.
+                </p>
+
+                {/* UPI QR code placeholder */}
+                <div className="mx-auto flex flex-col items-center gap-4 rounded-xl border border-border bg-white p-6 max-w-xs">
+                  <QrCode className="h-32 w-32 text-foreground" />
+                  <p className="text-xs text-muted-foreground">Scan with any UPI app</p>
+                  <div className="flex items-center gap-2 rounded-lg bg-secondary px-4 py-2">
+                    <span className="text-sm font-mono font-medium text-foreground">{UPI_ID}</span>
+                    <button onClick={copyUpi} className="text-primary hover:text-primary/80 transition-colors" aria-label="Copy UPI ID">
+                      {upiCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <Button
-                className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-semibold"
-                size="lg"
-                onClick={handleBooking}
-                disabled={bookingSubmitting}
-              >
-                <Send className="h-4 w-4 mr-2" />
-                {bookingSubmitting ? "Sending…" : "Send Booking Request"}
-              </Button>
-            </CardContent>
-          </Card>
+
+                <div className="rounded-lg bg-secondary/50 p-4 space-y-2 text-left">
+                  <p className="text-sm font-medium text-foreground">Payment Summary</p>
+                  {ROOM_TYPES.map((room) =>
+                    roomCounts[room.id] > 0 ? (
+                      <div key={room.id} className="flex justify-between text-sm text-muted-foreground">
+                        <span>{roomCounts[room.id]} × {room.name} × {nights} night{nights > 1 ? "s" : ""}</span>
+                        <span>₹{(roomCounts[room.id] * room.price * nights).toLocaleString("en-IN")}</span>
+                      </div>
+                    ) : null
+                  )}
+                  <div className="border-t border-border pt-2 flex justify-between font-semibold text-foreground">
+                    <span>Total</span>
+                    <span className="text-primary">₹{totalPrice.toLocaleString("en-IN")}</span>
+                  </div>
+                </div>
+
+                <p className="text-xs text-muted-foreground">
+                  After payment, send the screenshot to{" "}
+                  <a href="https://wa.me/918288808857" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                    WhatsApp (+91 8288808857)
+                  </a>{" "}
+                  for instant confirmation.
+                </p>
+
+                <Button variant="outline" onClick={resetBooking} className="mt-2">
+                  Make Another Booking
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </section>
 
