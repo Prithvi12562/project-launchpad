@@ -63,6 +63,7 @@ const UPI_ID = "royalplazahotels@upi";
 
 const Landing = () => {
   const { toast } = useToast();
+  const { user, signOut } = useAuth();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [bookingSubmitting, setBookingSubmitting] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
@@ -161,6 +162,37 @@ const Landing = () => {
             ))}
           </ul>
           <div className="flex items-center gap-2">
+            {user ? (
+              <div className="hidden lg:flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <Avatar className="h-8 w-8 border-2 border-primary/30">
+                    <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+                      {(user.user_metadata?.full_name || user.email || "U").charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm font-medium text-foreground">
+                    Hi, {user.user_metadata?.full_name?.split(" ")[0] || user.email?.split("@")[0]}
+                  </span>
+                </div>
+                <Link to="/dashboard">
+                  <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-primary">
+                    <User className="h-4 w-4 mr-1" /> Dashboard
+                  </Button>
+                </Link>
+                <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-primary" onClick={signOut}>
+                  <LogOut className="h-4 w-4 mr-1" /> Sign Out
+                </Button>
+              </div>
+            ) : (
+              <div className="hidden lg:flex items-center gap-2">
+                <Link to="/login">
+                  <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-primary">Sign In</Button>
+                </Link>
+                <Link to="/register">
+                  <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">Get Started</Button>
+                </Link>
+              </div>
+            )}
             <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold" onClick={() => scrollTo("booking")}>
               Book Now
             </Button>
