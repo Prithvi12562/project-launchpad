@@ -208,6 +208,18 @@ const Landing = () => {
 
         {mobileNavOpen && (
           <div className="lg:hidden border-t border-border bg-background px-4 py-4 space-y-1 animate-fade-in">
+            {user && (
+              <div className="flex items-center gap-2 px-3 py-2.5 mb-2 border-b border-border/50 pb-3">
+                <Avatar className="h-7 w-7 border-2 border-primary/30">
+                  <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+                    {(user.user_metadata?.full_name || user.email || "U").charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-medium text-foreground">
+                  Hi, {user.user_metadata?.full_name?.split(" ")[0] || user.email?.split("@")[0]}
+                </span>
+              </div>
+            )}
             {NAV_LINKS.map((l) => (
               <button
                 key={l.href}
@@ -217,6 +229,25 @@ const Landing = () => {
                 {l.label}
               </button>
             ))}
+            {user ? (
+              <>
+                <Link to="/dashboard" className="block w-full text-left px-3 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:text-primary hover:bg-secondary/50 transition-colors">
+                  Dashboard
+                </Link>
+                <button onClick={signOut} className="block w-full text-left px-3 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:text-primary hover:bg-secondary/50 transition-colors">
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="block w-full text-left px-3 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:text-primary hover:bg-secondary/50 transition-colors">
+                  Sign In
+                </Link>
+                <Link to="/register" className="block w-full text-left px-3 py-2.5 rounded-md text-sm font-medium text-primary font-semibold hover:bg-secondary/50 transition-colors">
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
         )}
       </nav>
