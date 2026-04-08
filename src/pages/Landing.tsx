@@ -1,5 +1,7 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import {
   Wifi, Wind, Waves, UtensilsCrossed, Car, Building2, Star,
   Phone, Mail, MapPin, Clock, ChevronDown, Send, Menu, X,
-  Minus, Plus, IndianRupee, QrCode, Copy, Check,
+  Minus, Plus, IndianRupee, QrCode, Copy, Check, LogOut, User,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import exteriorImg from "@/assets/hotel/exterior.jpg";
@@ -60,6 +62,7 @@ const UPI_ID = "royalplazahotels@upi";
 
 const Landing = () => {
   const { toast } = useToast();
+  const { user, signOut } = useAuth();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [bookingSubmitting, setBookingSubmitting] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
@@ -158,6 +161,37 @@ const Landing = () => {
             ))}
           </ul>
           <div className="flex items-center gap-2">
+            {user ? (
+              <div className="hidden lg:flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <Avatar className="h-8 w-8 border-2 border-primary/30">
+                    <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+                      {(user.user_metadata?.full_name || user.email || "U").charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm font-medium text-foreground">
+                    Hi, {user.user_metadata?.full_name?.split(" ")[0] || user.email?.split("@")[0]}
+                  </span>
+                </div>
+                <Link to="/dashboard">
+                  <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-primary">
+                    <User className="h-4 w-4 mr-1" /> Dashboard
+                  </Button>
+                </Link>
+                <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-primary" onClick={signOut}>
+                  <LogOut className="h-4 w-4 mr-1" /> Sign Out
+                </Button>
+              </div>
+            ) : (
+              <div className="hidden lg:flex items-center gap-2">
+                <Link to="/login">
+                  <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-primary">Sign In</Button>
+                </Link>
+                <Link to="/register">
+                  <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">Get Started</Button>
+                </Link>
+              </div>
+            )}
             <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold" onClick={() => scrollTo("booking")}>
               Book Now
             </Button>
@@ -173,6 +207,18 @@ const Landing = () => {
 
         {mobileNavOpen && (
           <div className="lg:hidden border-t border-border bg-background px-4 py-4 space-y-1 animate-fade-in">
+            {user && (
+              <div className="flex items-center gap-2 px-3 py-2.5 mb-2 border-b border-border/50 pb-3">
+                <Avatar className="h-7 w-7 border-2 border-primary/30">
+                  <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+                    {(user.user_metadata?.full_name || user.email || "U").charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-medium text-foreground">
+                  Hi, {user.user_metadata?.full_name?.split(" ")[0] || user.email?.split("@")[0]}
+                </span>
+              </div>
+            )}
             {NAV_LINKS.map((l) => (
               <button
                 key={l.href}
@@ -182,6 +228,25 @@ const Landing = () => {
                 {l.label}
               </button>
             ))}
+            {user ? (
+              <>
+                <Link to="/dashboard" className="block w-full text-left px-3 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:text-primary hover:bg-secondary/50 transition-colors">
+                  Dashboard
+                </Link>
+                <button onClick={signOut} className="block w-full text-left px-3 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:text-primary hover:bg-secondary/50 transition-colors">
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="block w-full text-left px-3 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:text-primary hover:bg-secondary/50 transition-colors">
+                  Sign In
+                </Link>
+                <Link to="/register" className="block w-full text-left px-3 py-2.5 rounded-md text-sm font-medium text-primary font-semibold hover:bg-secondary/50 transition-colors">
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
         )}
       </nav>
@@ -194,7 +259,7 @@ const Landing = () => {
         <img
           src={exteriorImg}
           alt="Royal Plaza Hotels Exterior"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-top"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
         <div className="relative z-10 text-center px-4 space-y-5 max-w-3xl mx-auto animate-fade-in">
