@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -10,6 +10,7 @@ import {
   Wifi, Wind, Waves, UtensilsCrossed, Car, Building2, Star,
   Phone, Mail, MapPin, Clock, ChevronDown, Send, Menu, X,
   Minus, Plus, IndianRupee, QrCode, Copy, Check, LogOut, User,
+  ArrowRight, Sparkles, Crown,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import exteriorImg from "@/assets/hotel/exterior.jpg";
@@ -34,12 +35,12 @@ const NAV_LINKS = [
 ];
 
 const AMENITIES = [
-  { icon: Wifi, label: "Free WiFi" },
-  { icon: Wind, label: "AC Rooms" },
-  { icon: Waves, label: "Swimming Pool" },
-  { icon: UtensilsCrossed, label: "Restaurant" },
-  { icon: Car, label: "Parking" },
-  { icon: Building2, label: "Banquet Hall" },
+  { icon: Wifi, label: "Free WiFi", desc: "High-speed internet throughout" },
+  { icon: Wind, label: "AC Rooms", desc: "Climate-controlled comfort" },
+  { icon: Waves, label: "Swimming Pool", desc: "Refreshing outdoor pool" },
+  { icon: UtensilsCrossed, label: "Restaurant", desc: "Fine dining experience" },
+  { icon: Car, label: "Free Parking", desc: "Secure valet parking" },
+  { icon: Building2, label: "Banquet Hall", desc: "Events & celebrations" },
 ];
 
 const GALLERY_IMAGES = [
@@ -60,30 +61,65 @@ const ROOM_TYPES = [
 
 const UPI_ID = "royalplazahotels@upi";
 
+/* ─── Intersection Observer hook for scroll animations ─── */
+const useInView = (threshold = 0.15) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setInView(true); obs.unobserve(el); } },
+      { threshold }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, inView };
+};
+
+const SectionHeading = ({ tag, title, subtitle }: { tag: string; title: string; subtitle?: string }) => (
+  <div className="text-center space-y-4 mb-16">
+    <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 text-accent text-xs font-semibold uppercase tracking-[0.2em]">
+      <Sparkles className="h-3.5 w-3.5" />
+      {tag}
+    </span>
+    <h2 className="text-3xl sm:text-4xl md:text-5xl font-heading font-bold text-foreground leading-tight">
+      {title}
+    </h2>
+    {subtitle && <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{subtitle}</p>}
+  </div>
+);
+
 const Landing = () => {
   const { toast } = useToast();
   const { user, signOut } = useAuth();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [navScrolled, setNavScrolled] = useState(false);
   const [bookingSubmitting, setBookingSubmitting] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [upiCopied, setUpiCopied] = useState(false);
   const [bookingForm, setBookingForm] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    checkIn: "",
-    checkOut: "",
+    name: "", phone: "", email: "", checkIn: "", checkOut: "",
   });
   const [roomCounts, setRoomCounts] = useState<Record<string, number>>({
-    deluxe: 0,
-    "super-deluxe": 0,
+    deluxe: 0, "super-deluxe": 0,
   });
 
+  const aboutView = useInView();
+  const roomsView = useInView();
+  const amenitiesView = useInView();
+  const galleryView = useInView();
+  const contactView = useInView();
+
+  useEffect(() => {
+    const onScroll = () => setNavScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const updateRoomCount = (id: string, delta: number) => {
-    setRoomCounts((prev) => ({
-      ...prev,
-      [id]: Math.max(0, Math.min(10, (prev[id] || 0) + delta)),
-    }));
+    setRoomCounts((prev) => ({ ...prev, [id]: Math.max(0, Math.min(10, (prev[id] || 0) + delta)) }));
   };
 
   const nights = useMemo(() => {
@@ -95,9 +131,7 @@ const Landing = () => {
   const totalRooms = Object.values(roomCounts).reduce((a, b) => a + b, 0);
 
   const totalPrice = useMemo(() => {
-    return ROOM_TYPES.reduce((sum, room) => {
-      return sum + (roomCounts[room.id] || 0) * room.price * Math.max(1, nights);
-    }, 0);
+    return ROOM_TYPES.reduce((sum, room) => sum + (roomCounts[room.id] || 0) * room.price * Math.max(1, nights), 0);
   }, [roomCounts, nights]);
 
   const scrollTo = (id: string) => {
@@ -141,62 +175,89 @@ const Landing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* ─── Sticky Navbar ─── */}
-      <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-lg">
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 h-16">
-          <span className="font-heading text-xl font-bold text-primary">
-            Royal Plaza
-          </span>
-          <ul className="hidden lg:flex items-center gap-6">
+    <div className="min-h-screen bg-background overflow-x-hidden">
+
+      {/* ═══════════════════ NAVBAR ═══════════════════ */}
+      <nav className={`fixed top-0 z-50 w-full transition-all duration-500 ${
+        navScrolled
+          ? "bg-background/90 backdrop-blur-xl border-b border-border/40 shadow-sm"
+          : "bg-transparent"
+      }`}>
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 h-18 py-4">
+          <button onClick={() => scrollTo("home")} className="flex items-center gap-2.5 group">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/25 group-hover:shadow-primary/40 transition-shadow">
+              <Crown className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <div className="flex flex-col">
+              <span className={`text-lg font-heading font-bold leading-tight transition-colors ${navScrolled ? "text-foreground" : "text-white"}`}>
+                Royal Plaza
+              </span>
+              <span className={`text-[10px] uppercase tracking-[0.15em] font-medium transition-colors ${navScrolled ? "text-accent" : "text-gold-light"}`}>
+                Hotels
+              </span>
+            </div>
+          </button>
+
+          <ul className="hidden lg:flex items-center gap-1">
             {NAV_LINKS.map((l) => (
               <li key={l.href}>
                 <button
                   onClick={() => scrollTo(l.href.slice(1))}
-                  className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-white/10 ${
+                    navScrolled ? "text-muted-foreground hover:text-primary hover:bg-primary/5" : "text-white/80 hover:text-white"
+                  }`}
                 >
                   {l.label}
                 </button>
               </li>
             ))}
           </ul>
-          <div className="flex items-center gap-2">
+
+          <div className="flex items-center gap-3">
             {user ? (
-              <div className="hidden lg:flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <Avatar className="h-8 w-8 border-2 border-primary/30">
-                    <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+              <div className="hidden lg:flex items-center gap-2">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm">
+                  <Avatar className="h-7 w-7 ring-2 ring-accent/30">
+                    <AvatarFallback className="bg-accent/20 text-accent text-xs font-bold">
                       {(user.user_metadata?.full_name || user.email || "U").charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-sm font-medium text-foreground">
+                  <span className={`text-sm font-medium ${navScrolled ? "text-foreground" : "text-white"}`}>
                     Hi, {user.user_metadata?.full_name?.split(" ")[0] || user.email?.split("@")[0]}
                   </span>
                 </div>
                 <Link to="/dashboard">
-                  <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-primary">
+                  <Button size="sm" variant="ghost" className={`${navScrolled ? "text-muted-foreground hover:text-primary" : "text-white/70 hover:text-white hover:bg-white/10"}`}>
                     <User className="h-4 w-4 mr-1" /> Dashboard
                   </Button>
                 </Link>
-                <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-primary" onClick={signOut}>
-                  <LogOut className="h-4 w-4 mr-1" /> Sign Out
+                <Button size="sm" variant="ghost" className={`${navScrolled ? "text-muted-foreground hover:text-primary" : "text-white/70 hover:text-white hover:bg-white/10"}`} onClick={signOut}>
+                  <LogOut className="h-4 w-4" />
                 </Button>
               </div>
             ) : (
               <div className="hidden lg:flex items-center gap-2">
                 <Link to="/login">
-                  <Button size="sm" variant="ghost" className="text-muted-foreground hover:text-primary">Sign In</Button>
+                  <Button size="sm" variant="ghost" className={`${navScrolled ? "text-muted-foreground hover:text-primary" : "text-white/80 hover:text-white hover:bg-white/10"}`}>
+                    Sign In
+                  </Button>
                 </Link>
                 <Link to="/register">
-                  <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">Get Started</Button>
+                  <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg shadow-accent/25 font-semibold">
+                    Get Started
+                  </Button>
                 </Link>
               </div>
             )}
-            <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 font-semibold" onClick={() => scrollTo("booking")}>
-              Book Now
+            <Button
+              size="sm"
+              className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg shadow-accent/25 font-semibold hidden sm:inline-flex"
+              onClick={() => scrollTo("booking")}
+            >
+              Book Now <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
             <button
-              className="lg:hidden p-2 text-foreground"
+              className={`lg:hidden p-2 rounded-lg transition-colors ${navScrolled ? "text-foreground hover:bg-secondary" : "text-white hover:bg-white/10"}`}
               onClick={() => setMobileNavOpen(!mobileNavOpen)}
               aria-label="Toggle menu"
             >
@@ -206,248 +267,337 @@ const Landing = () => {
         </div>
 
         {mobileNavOpen && (
-          <div className="lg:hidden border-t border-border bg-background px-4 py-4 space-y-1 animate-fade-in">
+          <div className="lg:hidden bg-background/95 backdrop-blur-xl border-t border-border/50 px-4 py-5 space-y-1 animate-fade-in">
             {user && (
-              <div className="flex items-center gap-2 px-3 py-2.5 mb-2 border-b border-border/50 pb-3">
-                <Avatar className="h-7 w-7 border-2 border-primary/30">
-                  <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
+              <div className="flex items-center gap-3 px-3 py-3 mb-3 rounded-xl bg-secondary/50">
+                <Avatar className="h-9 w-9 ring-2 ring-accent/30">
+                  <AvatarFallback className="bg-accent/20 text-accent text-sm font-bold">
                     {(user.user_metadata?.full_name || user.email || "U").charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-sm font-medium text-foreground">
-                  Hi, {user.user_metadata?.full_name?.split(" ")[0] || user.email?.split("@")[0]}
-                </span>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">
+                    Hi, {user.user_metadata?.full_name?.split(" ")[0] || user.email?.split("@")[0]}
+                  </p>
+                  <p className="text-xs text-muted-foreground">{user.email}</p>
+                </div>
               </div>
             )}
             {NAV_LINKS.map((l) => (
               <button
                 key={l.href}
                 onClick={() => scrollTo(l.href.slice(1))}
-                className="block w-full text-left px-3 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:text-primary hover:bg-secondary/50 transition-colors"
+                className="block w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
               >
                 {l.label}
               </button>
             ))}
-            {user ? (
-              <>
-                <Link to="/dashboard" className="block w-full text-left px-3 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:text-primary hover:bg-secondary/50 transition-colors">
-                  Dashboard
-                </Link>
-                <button onClick={signOut} className="block w-full text-left px-3 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:text-primary hover:bg-secondary/50 transition-colors">
-                  Sign Out
-                </button>
-              </>
-            ) : (
-              <>
-                <Link to="/login" className="block w-full text-left px-3 py-2.5 rounded-md text-sm font-medium text-muted-foreground hover:text-primary hover:bg-secondary/50 transition-colors">
-                  Sign In
-                </Link>
-                <Link to="/register" className="block w-full text-left px-3 py-2.5 rounded-md text-sm font-medium text-primary font-semibold hover:bg-secondary/50 transition-colors">
-                  Get Started
-                </Link>
-              </>
-            )}
+            <div className="pt-3 mt-3 border-t border-border/50 space-y-1">
+              {user ? (
+                <>
+                  <Link to="/dashboard" onClick={() => setMobileNavOpen(false)} className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all">
+                    <User className="h-4 w-4" /> Dashboard
+                  </Link>
+                  <button onClick={signOut} className="flex items-center gap-2 w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-destructive hover:bg-destructive/5 transition-all">
+                    <LogOut className="h-4 w-4" /> Sign Out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login" onClick={() => setMobileNavOpen(false)} className="block px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all">
+                    Sign In
+                  </Link>
+                  <Link to="/register" onClick={() => setMobileNavOpen(false)} className="block px-4 py-3 rounded-xl text-sm font-semibold text-accent hover:bg-accent/5 transition-all">
+                    Get Started
+                  </Link>
+                </>
+              )}
+            </div>
+            <Button className="w-full mt-3 bg-accent text-accent-foreground hover:bg-accent/90 font-semibold" onClick={() => scrollTo("booking")}>
+              Book Now <ArrowRight className="h-4 w-4 ml-1" />
+            </Button>
           </div>
         )}
       </nav>
 
-      {/* ─── Hero ─── */}
-      <section
-        id="home"
-        className="relative flex items-center justify-center min-h-[85vh] overflow-hidden"
-      >
+      {/* ═══════════════════ HERO ═══════════════════ */}
+      <section id="home" className="relative flex items-center justify-center min-h-screen overflow-hidden">
         <img
           src={exteriorImg}
           alt="Royal Plaza Hotels Exterior"
-          className="absolute inset-0 w-full h-full object-cover object-top"
+          className="absolute inset-0 w-full h-full object-cover object-top scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
-        <div className="relative z-10 text-center px-4 space-y-5 max-w-3xl mx-auto animate-fade-in">
-          <p className="uppercase tracking-[0.3em] text-sm font-medium text-[hsl(var(--gold-light))]">
-            Luxury Stay in Barara
-          </p>
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-heading font-bold text-white leading-tight">
-            Welcome to <br />
-            <span className="text-[hsl(var(--accent))]">Royal Plaza</span> Hotels
-          </h1>
-          <p className="text-base md:text-lg text-white/80 max-w-xl mx-auto">
-            Where Luxury Meets Comfort — premium rooms, exquisite dining, and warm hospitality on Sadhaura Road, Barara.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
-            <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 px-10 text-base font-semibold" onClick={() => scrollTo("booking")}>
-              Book Your Stay
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-white/60 text-white bg-white/10 hover:bg-white/20 px-10 text-base font-semibold"
-              onClick={() => scrollTo("rooms")}
-            >
-              View Rooms
-            </Button>
+        {/* Multi-layer overlay for depth */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80" />
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-dark/30 via-transparent to-purple-dark/30" />
+
+        {/* Decorative corner accents */}
+        <div className="absolute top-0 left-0 w-32 h-32 border-t-2 border-l-2 border-accent/20 m-8 rounded-tl-3xl hidden md:block" />
+        <div className="absolute bottom-0 right-0 w-32 h-32 border-b-2 border-r-2 border-accent/20 m-8 rounded-br-3xl hidden md:block" />
+
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+          <div className="space-y-6 animate-fade-in">
+            {/* Luxury badge */}
+            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-accent/30 bg-accent/10 backdrop-blur-sm">
+              <Star className="h-3.5 w-3.5 text-accent fill-accent" />
+              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-accent">
+                Premium Luxury Stay
+              </span>
+              <Star className="h-3.5 w-3.5 text-accent fill-accent" />
+            </div>
+
+            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-heading font-bold text-white leading-[0.95] tracking-tight">
+              Royal Plaza
+              <span className="block text-gradient-gold mt-1">Hotels</span>
+            </h1>
+
+            <p className="text-lg md:text-xl text-white/70 max-w-xl mx-auto font-light leading-relaxed">
+              Where luxury meets comfort — premium rooms, exquisite dining, and warm hospitality in Barara, Ambala
+            </p>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+              <Button
+                size="lg"
+                className="bg-accent text-accent-foreground hover:bg-accent/90 px-10 text-base font-semibold shadow-2xl shadow-accent/30 animate-pulse-glow group"
+                onClick={() => scrollTo("booking")}
+              >
+                Book Your Stay
+                <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="border-white/30 text-white bg-white/5 hover:bg-white/15 backdrop-blur-sm px-10 text-base font-medium"
+                onClick={() => scrollTo("rooms")}
+              >
+                Explore Rooms
+              </Button>
+            </div>
           </div>
+
+          {/* Scroll indicator */}
           <button
             onClick={() => scrollTo("about")}
-            className="mt-8 inline-flex animate-bounce text-white/60 hover:text-white transition-colors"
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/40 hover:text-white/70 transition-colors group"
             aria-label="Scroll down"
           >
-            <ChevronDown className="h-8 w-8" />
+            <span className="text-[10px] uppercase tracking-[0.2em] font-medium">Scroll</span>
+            <ChevronDown className="h-5 w-5 animate-bounce" />
           </button>
         </div>
       </section>
 
-      {/* ─── About ─── */}
-      <section id="about" className="px-4 py-20 bg-secondary/30">
-        <div className="max-w-5xl mx-auto text-center space-y-6">
-          <p className="uppercase tracking-[0.2em] text-sm font-medium text-accent">About Us</p>
-          <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground">
-            Experience Premium Hospitality
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-3xl mx-auto leading-relaxed">
-            Royal Plaza Hotels is a premium hotel offering comfortable rooms and a luxury experience for families, couples, travelers, and event guests. Located on Sadhaura Road, Barara, we provide top-class hospitality with modern amenities and warm service.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-4 text-sm text-muted-foreground">
-            <span className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-primary" /> Near Dhanaura Bus Stand (200m)
-            </span>
-            <span className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-primary" /> Prachin Hanuman Mandir (500m)
-            </span>
+      {/* ═══════════════════ ABOUT ═══════════════════ */}
+      <section id="about" className="relative px-4 py-24 md:py-32">
+        <div className="absolute inset-0 bg-gradient-to-b from-secondary/50 to-transparent" />
+        <div
+          ref={aboutView.ref}
+          className={`relative max-w-6xl mx-auto transition-all duration-700 ${aboutView.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+        >
+          <SectionHeading tag="About Us" title="Experience Premium Hospitality" />
+
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            {/* Image collage */}
+            <div className="relative">
+              <div className="grid grid-cols-2 gap-3">
+                <img src={receptionImg} alt="Reception" className="w-full h-48 object-cover rounded-2xl shadow-lg" />
+                <img src={restaurantImg} alt="Restaurant" className="w-full h-48 object-cover rounded-2xl shadow-lg mt-8" />
+              </div>
+              {/* Floating stat card */}
+              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 glass rounded-2xl px-8 py-4 flex items-center gap-6 shadow-xl">
+                <div className="text-center">
+                  <p className="text-2xl font-heading font-bold text-primary">500+</p>
+                  <p className="text-xs text-muted-foreground">Happy Guests</p>
+                </div>
+                <div className="w-px h-10 bg-border" />
+                <div className="text-center">
+                  <p className="text-2xl font-heading font-bold text-accent">4.8</p>
+                  <p className="text-xs text-muted-foreground">Rating</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Text content */}
+            <div className="space-y-6">
+              <p className="text-muted-foreground text-lg leading-relaxed">
+                Royal Plaza Hotels is a premium hotel offering comfortable rooms and a luxury experience for families, couples, travelers, and event guests. Located on Sadhaura Road, Barara, we provide top-class hospitality with modern amenities and warm service.
+              </p>
+              <div className="space-y-4">
+                <div className="flex items-start gap-4 p-4 rounded-xl bg-secondary/50 hover:bg-secondary/70 transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <MapPin className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground text-sm">Near Dhanaura Bus Stand</p>
+                    <p className="text-xs text-muted-foreground">Just 200m away — easy access</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4 p-4 rounded-xl bg-secondary/50 hover:bg-secondary/70 transition-colors">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-accent/10">
+                    <MapPin className="h-5 w-5 text-accent" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground text-sm">Prachin Hanuman Mandir</p>
+                    <p className="text-xs text-muted-foreground">Historic temple, 500m away</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ─── Rooms ─── */}
-      <section id="rooms" className="px-4 py-20">
-        <div className="max-w-6xl mx-auto space-y-10">
-          <div className="text-center space-y-3">
-            <p className="uppercase tracking-[0.2em] text-sm font-medium text-accent">Our Rooms</p>
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground">
-              Choose Your Perfect Stay
-            </h2>
-          </div>
+      {/* ═══════════════════ ROOMS ═══════════════════ */}
+      <section id="rooms" className="px-4 py-24 md:py-32">
+        <div
+          ref={roomsView.ref}
+          className={`max-w-6xl mx-auto transition-all duration-700 ${roomsView.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+        >
+          <SectionHeading tag="Our Rooms" title="Choose Your Perfect Stay" subtitle="Thoughtfully designed rooms for an unforgettable experience" />
 
           <div className="grid md:grid-cols-2 gap-8">
-            {ROOM_TYPES.map((room) => (
-              <Card key={room.id} className={`overflow-hidden hover:shadow-xl transition-shadow duration-300 group relative ${room.bestSeller ? "border-accent/40" : "border-border"}`}>
+            {ROOM_TYPES.map((room, idx) => (
+              <div
+                key={room.id}
+                className={`group relative rounded-3xl overflow-hidden bg-card border hover-lift ${
+                  room.bestSeller ? "border-accent/30 shadow-lg shadow-accent/10" : "border-border"
+                }`}
+                style={{ animationDelay: `${idx * 0.15}s` }}
+              >
                 {room.bestSeller && (
-                  <div className="absolute top-4 right-4 z-10 flex items-center gap-1 rounded-full bg-accent text-accent-foreground px-3 py-1 text-xs font-semibold">
-                    <Star className="h-3 w-3" /> Best Seller
+                  <div className="absolute top-5 right-5 z-10 flex items-center gap-1.5 rounded-full bg-accent text-accent-foreground px-4 py-1.5 text-xs font-bold shadow-lg shadow-accent/25">
+                    <Star className="h-3.5 w-3.5 fill-current" /> Best Seller
                   </div>
                 )}
-                <div className="relative h-64 overflow-hidden">
-                  <img src={room.image} alt={room.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div className="relative h-72 overflow-hidden">
+                  <img
+                    src={room.image}
+                    alt={room.name}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
                 </div>
-                <CardContent className="p-6 space-y-3">
-                  <h3 className="text-xl font-heading font-bold text-card-foreground">{room.name}</h3>
-                  <p className="text-muted-foreground text-sm">{room.description}</p>
-                  <div className="flex items-center justify-between pt-2">
-                    <span className="text-2xl font-bold text-primary">
-                      ₹{room.price.toLocaleString("en-IN")}
-                      <span className="text-sm font-normal text-muted-foreground">/night</span>
-                    </span>
-                    <Button size="sm" className={room.bestSeller ? "bg-accent text-accent-foreground hover:bg-accent/90 font-semibold" : "bg-primary hover:bg-primary/90 text-primary-foreground"} onClick={() => { updateRoomCount(room.id, 1); scrollTo("booking"); }}>
-                      Book Now
+                <div className="p-7 space-y-4">
+                  <h3 className="text-2xl font-heading font-bold text-card-foreground">{room.name}</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{room.description}</p>
+                  <div className="flex items-center justify-between pt-3 border-t border-border/50">
+                    <div>
+                      <span className="text-3xl font-bold text-gradient-gold">₹{room.price.toLocaleString("en-IN")}</span>
+                      <span className="text-sm text-muted-foreground ml-1">/night</span>
+                    </div>
+                    <Button
+                      className={`${room.bestSeller ? "bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg shadow-accent/25" : "bg-primary hover:bg-primary/90 text-primary-foreground"} font-semibold group/btn`}
+                      onClick={() => { updateRoomCount(room.id, 1); scrollTo("booking"); }}
+                    >
+                      Book Now <ArrowRight className="h-4 w-4 ml-1 group-hover/btn:translate-x-1 transition-transform" />
                     </Button>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── Amenities ─── */}
-      <section id="amenities" className="px-4 py-20 bg-secondary/30">
-        <div className="max-w-5xl mx-auto space-y-10">
-          <div className="text-center space-y-3">
-            <p className="uppercase tracking-[0.2em] text-sm font-medium text-accent">Amenities</p>
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground">
-              Everything You Need
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-            {AMENITIES.map((a) => (
-              <div
-                key={a.label}
-                className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-6 hover:border-accent/40 hover:shadow-md transition-all duration-300"
-              >
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-                  <a.icon className="h-7 w-7 text-primary" />
                 </div>
-                <span className="text-sm font-medium text-card-foreground">{a.label}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── Gallery ─── */}
-      <section id="gallery" className="px-4 py-20">
-        <div className="max-w-6xl mx-auto space-y-10">
-          <div className="text-center space-y-3">
-            <p className="uppercase tracking-[0.2em] text-sm font-medium text-accent">Gallery</p>
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground">
-              A Glimpse of Royal Plaza
-            </h2>
+      {/* ═══════════════════ AMENITIES ═══════════════════ */}
+      <section id="amenities" className="relative px-4 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-secondary/40 via-secondary/20 to-transparent" />
+        <div
+          ref={amenitiesView.ref}
+          className={`relative max-w-6xl mx-auto transition-all duration-700 ${amenitiesView.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+        >
+          <SectionHeading tag="Amenities" title="Everything You Need" subtitle="World-class facilities for a luxurious experience" />
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+            {AMENITIES.map((a, i) => (
+              <div
+                key={a.label}
+                className="group relative flex flex-col items-center gap-4 rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm p-8 hover:border-accent/40 hover-lift text-center"
+                style={{ animationDelay: `${i * 0.1}s` }}
+              >
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 group-hover:from-accent/15 group-hover:to-accent/5 transition-colors duration-300">
+                  <a.icon className="h-7 w-7 text-primary group-hover:text-accent transition-colors duration-300" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-card-foreground">{a.label}</h3>
+                  <p className="text-xs text-muted-foreground mt-1">{a.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        </div>
+      </section>
+
+      {/* ═══════════════════ GALLERY ═══════════════════ */}
+      <section id="gallery" className="px-4 py-24 md:py-32">
+        <div
+          ref={galleryView.ref}
+          className={`max-w-6xl mx-auto transition-all duration-700 ${galleryView.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+        >
+          <SectionHeading tag="Gallery" title="A Glimpse of Royal Plaza" subtitle="Step inside our world of luxury and comfort" />
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
             {GALLERY_IMAGES.map((img, i) => (
               <div
                 key={i}
-                className={`overflow-hidden rounded-lg group ${
+                className={`group overflow-hidden rounded-2xl cursor-pointer relative ${
                   i === 0 || i === 5 ? "md:col-span-2 md:row-span-2" : ""
                 }`}
               >
                 <img
                   src={img.src}
                   alt={img.alt}
-                  className="w-full h-full object-cover min-h-[180px] group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover min-h-[180px] group-hover:scale-110 transition-transform duration-700 ease-out"
                   loading="lazy"
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <span className="text-white text-sm font-medium">{img.alt}</span>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── Booking ─── */}
-      <section id="booking" className="px-4 py-20">
-        <div className="max-w-2xl mx-auto space-y-10">
-          <div className="text-center space-y-3">
-            <p className="uppercase tracking-[0.2em] text-sm font-medium text-accent">Reservation</p>
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground">
-              Book Your Stay
-            </h2>
-            <p className="text-muted-foreground">Select rooms, fill in details, and pay via UPI.</p>
-          </div>
+      {/* ═══════════════════ BOOKING ═══════════════════ */}
+      <section id="booking" className="relative px-4 py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-secondary/30 to-transparent" />
+        <div className="relative max-w-2xl mx-auto">
+          <SectionHeading tag="Reservation" title="Book Your Stay" subtitle="Select rooms, fill in details, and pay via UPI" />
 
           {!bookingSuccess ? (
-            <Card className="border-border">
-              <CardContent className="p-6 md:p-8 space-y-6">
+            <Card className="border-border/60 shadow-2xl shadow-primary/5 rounded-3xl overflow-hidden">
+              <CardContent className="p-6 md:p-10 space-y-7">
                 {/* Room selection */}
                 <div className="space-y-4">
-                  <Label className="text-base font-semibold">Select Rooms</Label>
+                  <Label className="text-base font-semibold flex items-center gap-2">
+                    <Crown className="h-4 w-4 text-accent" /> Select Rooms
+                  </Label>
                   {ROOM_TYPES.map((room) => (
-                    <div key={room.id} className="flex items-center justify-between rounded-lg border border-border p-4">
-                      <div className="space-y-0.5">
-                        <p className="font-medium text-card-foreground">{room.name}</p>
-                        <p className="text-sm text-primary font-semibold">₹{room.price.toLocaleString("en-IN")}/night</p>
+                    <div key={room.id} className={`flex items-center justify-between rounded-2xl border p-5 transition-all ${
+                      roomCounts[room.id] > 0 ? "border-accent/40 bg-accent/5 shadow-sm" : "border-border hover:border-primary/20"
+                    }`}>
+                      <div className="space-y-1">
+                        <p className="font-semibold text-card-foreground flex items-center gap-2">
+                          {room.name}
+                          {room.bestSeller && <span className="text-[10px] bg-accent/10 text-accent px-2 py-0.5 rounded-full font-bold">Popular</span>}
+                        </p>
+                        <p className="text-sm text-primary font-bold">₹{room.price.toLocaleString("en-IN")}<span className="text-muted-foreground font-normal">/night</span></p>
                       </div>
                       <div className="flex items-center gap-3">
                         <button
                           type="button"
                           onClick={() => updateRoomCount(room.id, -1)}
-                          className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground hover:bg-secondary transition-colors disabled:opacity-30"
+                          className="flex h-9 w-9 items-center justify-center rounded-xl border border-border text-muted-foreground hover:bg-secondary hover:border-primary/30 transition-all disabled:opacity-30"
                           disabled={!roomCounts[room.id]}
                         >
                           <Minus className="h-4 w-4" />
                         </button>
-                        <span className="w-6 text-center font-semibold text-foreground">{roomCounts[room.id] || 0}</span>
+                        <span className="w-6 text-center font-bold text-lg text-foreground">{roomCounts[room.id] || 0}</span>
                         <button
                           type="button"
                           onClick={() => updateRoomCount(room.id, 1)}
-                          className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground hover:bg-secondary transition-colors"
+                          className="flex h-9 w-9 items-center justify-center rounded-xl border border-border text-muted-foreground hover:bg-secondary hover:border-primary/30 transition-all"
                         >
                           <Plus className="h-4 w-4" />
                         </button>
@@ -459,92 +609,91 @@ const Landing = () => {
                 {/* Guest details */}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="b-name">Full Name *</Label>
-                    <Input id="b-name" placeholder="Your name" value={bookingForm.name} onChange={(e) => setBookingForm({ ...bookingForm, name: e.target.value })} />
+                    <Label htmlFor="b-name" className="text-sm font-medium">Full Name *</Label>
+                    <Input id="b-name" placeholder="Your name" className="rounded-xl h-11" value={bookingForm.name} onChange={(e) => setBookingForm({ ...bookingForm, name: e.target.value })} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="b-phone">Phone *</Label>
-                    <Input id="b-phone" placeholder="+91 XXXXX XXXXX" value={bookingForm.phone} onChange={(e) => setBookingForm({ ...bookingForm, phone: e.target.value })} />
+                    <Label htmlFor="b-phone" className="text-sm font-medium">Phone *</Label>
+                    <Input id="b-phone" placeholder="+91 XXXXX XXXXX" className="rounded-xl h-11" value={bookingForm.phone} onChange={(e) => setBookingForm({ ...bookingForm, phone: e.target.value })} />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="b-email">Email</Label>
-                  <Input id="b-email" type="email" placeholder="your@email.com" value={bookingForm.email} onChange={(e) => setBookingForm({ ...bookingForm, email: e.target.value })} />
+                  <Label htmlFor="b-email" className="text-sm font-medium">Email</Label>
+                  <Input id="b-email" type="email" placeholder="your@email.com" className="rounded-xl h-11" value={bookingForm.email} onChange={(e) => setBookingForm({ ...bookingForm, email: e.target.value })} />
                 </div>
 
                 {/* Dates */}
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="b-checkin">Check-in Date *</Label>
-                    <Input id="b-checkin" type="date" value={bookingForm.checkIn} min={new Date().toISOString().split("T")[0]} onChange={(e) => setBookingForm({ ...bookingForm, checkIn: e.target.value })} />
+                    <Label htmlFor="b-checkin" className="text-sm font-medium">Check-in Date *</Label>
+                    <Input id="b-checkin" type="date" className="rounded-xl h-11" value={bookingForm.checkIn} min={new Date().toISOString().split("T")[0]} onChange={(e) => setBookingForm({ ...bookingForm, checkIn: e.target.value })} />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="b-checkout">Check-out Date *</Label>
-                    <Input id="b-checkout" type="date" value={bookingForm.checkOut} min={bookingForm.checkIn || new Date().toISOString().split("T")[0]} onChange={(e) => setBookingForm({ ...bookingForm, checkOut: e.target.value })} />
+                    <Label htmlFor="b-checkout" className="text-sm font-medium">Check-out Date *</Label>
+                    <Input id="b-checkout" type="date" className="rounded-xl h-11" value={bookingForm.checkOut} min={bookingForm.checkIn || new Date().toISOString().split("T")[0]} onChange={(e) => setBookingForm({ ...bookingForm, checkOut: e.target.value })} />
                   </div>
                 </div>
 
                 {/* Price summary */}
                 {totalRooms > 0 && (
-                  <div className="rounded-lg bg-secondary/50 p-4 space-y-2">
-                    <p className="text-sm font-medium text-foreground">Booking Summary</p>
+                  <div className="rounded-2xl bg-gradient-to-br from-secondary/70 to-secondary/30 p-5 space-y-3 border border-border/30">
+                    <p className="text-sm font-bold text-foreground flex items-center gap-2">
+                      <IndianRupee className="h-4 w-4 text-accent" /> Booking Summary
+                    </p>
                     {ROOM_TYPES.map((room) =>
                       roomCounts[room.id] > 0 ? (
                         <div key={room.id} className="flex justify-between text-sm text-muted-foreground">
                           <span>{roomCounts[room.id]} × {room.name} {nights > 0 ? `× ${nights} night${nights > 1 ? "s" : ""}` : ""}</span>
-                          <span>₹{(roomCounts[room.id] * room.price * Math.max(1, nights)).toLocaleString("en-IN")}</span>
+                          <span className="font-medium text-foreground">₹{(roomCounts[room.id] * room.price * Math.max(1, nights)).toLocaleString("en-IN")}</span>
                         </div>
                       ) : null
                     )}
-                    <div className="border-t border-border pt-2 flex justify-between font-semibold text-foreground">
+                    <div className="border-t border-border/50 pt-3 flex justify-between font-bold text-foreground text-lg">
                       <span>Total</span>
-                      <span className="flex items-center gap-1 text-primary">
-                        <IndianRupee className="h-4 w-4" />
-                        {totalPrice.toLocaleString("en-IN")}
-                      </span>
+                      <span className="text-gradient-gold">₹{totalPrice.toLocaleString("en-IN")}</span>
                     </div>
                   </div>
                 )}
 
                 <Button
-                  className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-semibold"
+                  className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-bold text-base rounded-2xl h-13 shadow-xl shadow-accent/20 group"
                   size="lg"
                   onClick={handleBooking}
                   disabled={bookingSubmitting}
                 >
                   <Send className="h-4 w-4 mr-2" />
                   {bookingSubmitting ? "Sending…" : "Confirm & Pay via UPI"}
+                  <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </CardContent>
             </Card>
           ) : (
             /* ─── UPI Payment Card ─── */
-            <Card className="border-accent/40">
-              <CardContent className="p-6 md:p-8 space-y-6 text-center">
-                <div className="flex items-center justify-center gap-2 text-accent">
-                  <Check className="h-6 w-6" />
-                  <h3 className="text-xl font-heading font-bold">Booking Confirmed!</h3>
+            <Card className="border-accent/30 shadow-2xl shadow-accent/10 rounded-3xl overflow-hidden">
+              <CardContent className="p-6 md:p-10 space-y-6 text-center">
+                <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-green-500/10 text-green-600">
+                  <Check className="h-5 w-5" />
+                  <h3 className="text-lg font-heading font-bold">Booking Confirmed!</h3>
                 </div>
                 <p className="text-muted-foreground">
                   Please complete your payment of{" "}
-                  <span className="font-bold text-primary">₹{totalPrice.toLocaleString("en-IN")}</span>{" "}
+                  <span className="font-bold text-gradient-gold text-lg">₹{totalPrice.toLocaleString("en-IN")}</span>{" "}
                   via UPI to confirm your reservation.
                 </p>
 
-                {/* UPI QR code placeholder */}
-                <div className="mx-auto flex flex-col items-center gap-4 rounded-xl border border-border bg-white p-6 max-w-xs">
-                  <QrCode className="h-32 w-32 text-foreground" />
+                <div className="mx-auto flex flex-col items-center gap-4 rounded-2xl border border-border/50 bg-white p-8 max-w-xs shadow-inner">
+                  <QrCode className="h-28 w-28 text-foreground/70" />
                   <p className="text-xs text-muted-foreground">Scan with any UPI app</p>
-                  <div className="flex items-center gap-2 rounded-lg bg-secondary px-4 py-2">
-                    <span className="text-sm font-mono font-medium text-foreground">{UPI_ID}</span>
+                  <div className="flex items-center gap-2 rounded-xl bg-secondary px-5 py-2.5">
+                    <span className="text-sm font-mono font-semibold text-foreground">{UPI_ID}</span>
                     <button onClick={copyUpi} className="text-primary hover:text-primary/80 transition-colors" aria-label="Copy UPI ID">
-                      {upiCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                      {upiCopied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
                     </button>
                   </div>
                 </div>
 
-                <div className="rounded-lg bg-secondary/50 p-4 space-y-2 text-left">
-                  <p className="text-sm font-medium text-foreground">Payment Summary</p>
+                <div className="rounded-2xl bg-secondary/50 p-5 space-y-2 text-left">
+                  <p className="text-sm font-bold text-foreground">Payment Summary</p>
                   {ROOM_TYPES.map((room) =>
                     roomCounts[room.id] > 0 ? (
                       <div key={room.id} className="flex justify-between text-sm text-muted-foreground">
@@ -553,7 +702,7 @@ const Landing = () => {
                       </div>
                     ) : null
                   )}
-                  <div className="border-t border-border pt-2 flex justify-between font-semibold text-foreground">
+                  <div className="border-t border-border pt-2 flex justify-between font-bold text-foreground">
                     <span>Total</span>
                     <span className="text-primary">₹{totalPrice.toLocaleString("en-IN")}</span>
                   </div>
@@ -561,13 +710,13 @@ const Landing = () => {
 
                 <p className="text-xs text-muted-foreground">
                   After payment, send the screenshot to{" "}
-                  <a href="https://wa.me/918288808857" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                  <a href="https://wa.me/918288808857" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">
                     WhatsApp (+91 8288808857)
                   </a>{" "}
                   for instant confirmation.
                 </p>
 
-                <Button variant="outline" onClick={resetBooking} className="mt-2">
+                <Button variant="outline" onClick={resetBooking} className="rounded-xl">
                   Make Another Booking
                 </Button>
               </CardContent>
@@ -576,68 +725,79 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* ─── Contact ─── */}
-      <section id="contact" className="px-4 py-20 bg-secondary/30">
-        <div className="max-w-5xl mx-auto space-y-10">
-          <div className="text-center space-y-3">
-            <p className="uppercase tracking-[0.2em] text-sm font-medium text-accent">Contact</p>
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground">
-              Get In Touch
-            </h2>
+      {/* ═══════════════════ CONTACT ═══════════════════ */}
+      <section id="contact" className="px-4 py-24 md:py-32">
+        <div
+          ref={contactView.ref}
+          className={`max-w-6xl mx-auto transition-all duration-700 ${contactView.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+        >
+          <SectionHeading tag="Contact" title="Get In Touch" subtitle="We'd love to hear from you" />
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { icon: Phone, title: "Phone", content: "+91 8288808857", href: "tel:+918288808857" },
+              { icon: Mail, title: "Email", content: "ranaabhishek1988@gmail.com", href: "mailto:ranaabhishek1988@gmail.com" },
+              { icon: Clock, title: "Check-in / Out", content: "12:00 PM / 12:00 PM", href: null },
+            ].map((item) => (
+              <div key={item.title} className="group flex flex-col items-center gap-4 rounded-2xl border border-border/60 bg-card/80 p-8 text-center hover-lift">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 group-hover:from-accent/15 group-hover:to-accent/5 transition-colors duration-300">
+                  <item.icon className="h-6 w-6 text-primary group-hover:text-accent transition-colors duration-300" />
+                </div>
+                <h3 className="font-heading font-semibold text-card-foreground">{item.title}</h3>
+                {item.href ? (
+                  <a href={item.href} className="text-sm text-muted-foreground hover:text-primary transition-colors break-all">
+                    {item.content}
+                  </a>
+                ) : (
+                  <p className="text-sm text-muted-foreground">{item.content}</p>
+                )}
+              </div>
+            ))}
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-8 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <Phone className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="font-heading font-semibold text-card-foreground">Phone</h3>
-              <a href="tel:+918288808857" className="text-muted-foreground hover:text-primary transition-colors">
-                +91 8288808857
-              </a>
+
+          <div className="text-center mt-10">
+            <div className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-secondary/50 text-muted-foreground">
+              <MapPin className="h-4 w-4 text-primary shrink-0" />
+              <span className="text-sm">Sadhaura Road, VPO Dhanaura, Barara, Ambala, Haryana, India</span>
             </div>
-            <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-8 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <Mail className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="font-heading font-semibold text-card-foreground">Email</h3>
-              <a href="mailto:ranaabhishek1988@gmail.com" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                ranaabhishek1988@gmail.com
-              </a>
-            </div>
-            <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-card p-8 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <Clock className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="font-heading font-semibold text-card-foreground">Check-in / Out</h3>
-              <p className="text-muted-foreground text-sm">12:00 PM / 12:00 PM</p>
-            </div>
-          </div>
-          <div className="text-center pt-4">
-            <p className="flex items-center justify-center gap-2 text-muted-foreground">
-              <MapPin className="h-4 w-4 text-primary" />
-              Sadhaura Road, VPO Dhanaura, Barara, Ambala, Haryana, India
-            </p>
           </div>
         </div>
       </section>
 
-      {/* ─── Footer ─── */}
-      <footer className="border-t border-border bg-card px-4 py-10">
-        <div className="max-w-6xl mx-auto flex flex-col items-center gap-8">
-          <div className="text-center">
-            <h3 className="font-heading text-lg font-bold text-card-foreground">Royal Plaza Hotels</h3>
-            <p className="text-sm text-muted-foreground">Where Luxury Meets Comfort</p>
+      {/* ═══════════════════ FOOTER ═══════════════════ */}
+      <footer className="relative border-t border-border bg-gradient-to-b from-card to-secondary/30 px-4 py-16">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col items-center gap-10">
+            {/* Brand */}
+            <div className="text-center space-y-2">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/25">
+                  <Crown className="h-5 w-5 text-primary-foreground" />
+                </div>
+              </div>
+              <h3 className="font-heading text-xl font-bold text-card-foreground">Royal Plaza Hotels</h3>
+              <p className="text-sm text-muted-foreground font-light">Where Luxury Meets Comfort</p>
+            </div>
+
+            {/* Nav links */}
+            <ul className="flex flex-wrap items-center justify-center gap-2 text-sm">
+              {NAV_LINKS.map((l) => (
+                <li key={l.href}>
+                  <button
+                    onClick={() => scrollTo(l.href.slice(1))}
+                    className="px-3 py-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
+                  >
+                    {l.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            {/* Divider */}
+            <div className="w-full max-w-sm h-px bg-gradient-to-r from-transparent via-border to-transparent" />
+
+            <p className="text-xs text-muted-foreground/60">© 2026 Royal Plaza Hotels. All rights reserved.</p>
           </div>
-          <ul className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-sm text-muted-foreground">
-            {NAV_LINKS.map((l) => (
-              <li key={l.href}>
-                <button onClick={() => scrollTo(l.href.slice(1))} className="hover:text-primary transition-colors">
-                  {l.label}
-                </button>
-              </li>
-            ))}
-          </ul>
-          <p className="text-xs text-muted-foreground">© 2026 Royal Plaza Hotels. All rights reserved.</p>
         </div>
       </footer>
     </div>
