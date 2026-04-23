@@ -321,105 +321,82 @@ const Landing = () => {
       </nav>
 
       {/* ═══════════════════ HERO ═══════════════════ */}
-      <section id="home" className="relative min-h-screen overflow-hidden bg-gradient-to-br from-background via-secondary/40 to-background">
-        {/* Soft ambient blobs */}
-        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-primary/10 blur-3xl" />
-        <div className="absolute -bottom-32 -right-32 w-[500px] h-[500px] rounded-full bg-accent/10 blur-3xl" />
+      <section id="home" className="relative min-h-screen overflow-hidden">
+        {/* Panning background image */}
+        <div className="absolute inset-0">
+          <img
+            src={exteriorImg}
+            alt="Royal Plaza Hotels Exterior"
+            className="w-full h-full object-cover object-top animate-pan-x"
+          />
+        </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20 md:pt-36 md:pb-24 min-h-screen flex items-center">
-          <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center w-full">
-            {/* LEFT — Text */}
-            <div className="lg:col-span-6 space-y-7 animate-fade-in text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-accent/30 bg-accent/10 backdrop-blur-sm">
-                <Star className="h-3.5 w-3.5 text-accent fill-accent" />
-                <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-accent">
-                  Premium Luxury Stay
-                </span>
-              </div>
+        {/* Lightened purple tint overlays */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-dark/70 via-primary/55 to-purple-dark/75" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
 
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-heading font-bold text-foreground leading-[1.02] tracking-tight">
-                Royal Plaza
-                <span className="block text-gradient-gold mt-1">Hotels</span>
-              </h1>
+        {/* Ambient glow blobs */}
+        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-primary/30 blur-3xl" />
+        <div className="absolute -bottom-32 -right-32 w-[500px] h-[500px] rounded-full bg-accent/20 blur-3xl" />
 
-              <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Where luxury meets comfort — premium rooms, exquisite dining, and warm hospitality in Barara, Ambala.
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4 pt-2">
-                <Button
-                  size="lg"
-                  className="bg-accent text-accent-foreground hover:bg-accent/90 px-9 text-base font-semibold shadow-xl shadow-accent/20 group"
-                  onClick={() => scrollTo("booking")}
-                >
-                  Book Your Stay
-                  <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-primary/30 text-primary hover:bg-primary/5 px-9 text-base font-medium"
-                  onClick={() => scrollTo("rooms")}
-                >
-                  Explore Rooms
-                </Button>
-              </div>
-
-              {/* mini stats row */}
-              <div className="flex items-center justify-center lg:justify-start gap-8 pt-6">
-                <div className="text-center lg:text-left">
-                  <p className="text-2xl font-heading font-bold text-primary">500+</p>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Guests</p>
-                </div>
-                <div className="w-px h-10 bg-border" />
-                <div className="text-center lg:text-left">
-                  <p className="text-2xl font-heading font-bold text-primary">4.8★</p>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Rated</p>
-                </div>
-                <div className="w-px h-10 bg-border" />
-                <div className="text-center lg:text-left">
-                  <p className="text-2xl font-heading font-bold text-primary">24/7</p>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Service</p>
-                </div>
-              </div>
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-20 md:pt-36 md:pb-24 min-h-screen flex flex-col items-center justify-center text-center">
+          <div className="space-y-7 animate-fade-in">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-accent/40 bg-white/10 backdrop-blur-md">
+              <Star className="h-3.5 w-3.5 text-accent fill-accent" />
+              <span className="text-[11px] font-semibold uppercase tracking-[0.25em] text-white">
+                Premium Luxury Stay
+              </span>
             </div>
 
-            {/* RIGHT — Framed image, offset to the side */}
-            <div className="lg:col-span-6 relative animate-fade-in">
-              <div className="relative mx-auto lg:ml-auto max-w-md lg:max-w-none w-full">
-                {/* Decorative frame offset behind */}
-                <div className="absolute -top-5 -right-5 w-full h-full rounded-3xl border-2 border-accent/40 hidden md:block" />
-                <div className="absolute -bottom-5 -left-5 w-full h-full rounded-3xl bg-primary/10 hidden md:block" />
+            <h1 className="text-5xl sm:text-6xl lg:text-8xl font-heading font-bold text-white leading-[1.02] tracking-tight drop-shadow-lg">
+              Royal Plaza
+              <span className="block text-gradient-gold mt-2">Hotels</span>
+            </h1>
 
-                {/* Main image */}
-                <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-primary/20 aspect-[4/5] lg:aspect-[3/4]">
-                  <img
-                    src={exteriorImg}
-                    alt="Royal Plaza Hotels Exterior"
-                    className="w-full h-full object-cover object-top"
-                  />
-                  {/* light wash for tone */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/20 via-transparent to-transparent" />
-                </div>
+            <p className="text-base md:text-xl text-white/85 max-w-2xl mx-auto leading-relaxed">
+              Where luxury meets comfort — premium rooms, exquisite dining, and warm hospitality in Barara, Ambala.
+            </p>
 
-                {/* Floating badge card */}
-                <div className="absolute -bottom-6 -left-4 md:-left-8 glass rounded-2xl px-5 py-3 flex items-center gap-3 shadow-xl">
-                  <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center">
-                    <Star className="h-5 w-5 text-accent fill-accent" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-heading font-semibold text-foreground">Luxury Stay</p>
-                    <p className="text-[11px] text-muted-foreground">Barara, Ambala</p>
-                  </div>
-                </div>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+              <Button
+                size="lg"
+                className="bg-accent text-accent-foreground hover:bg-accent/90 px-9 text-base font-semibold shadow-xl shadow-accent/30 group"
+                onClick={() => scrollTo("booking")}
+              >
+                Book Your Stay
+                <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="border-white/40 text-white hover:bg-white/10 hover:text-white bg-white/5 backdrop-blur-sm px-9 text-base font-medium"
+                onClick={() => scrollTo("rooms")}
+              >
+                Explore Rooms
+              </Button>
+            </div>
+
+            <div className="flex items-center justify-center gap-8 pt-8">
+              <div className="text-center">
+                <p className="text-2xl font-heading font-bold text-gold-light">500+</p>
+                <p className="text-xs text-white/70 uppercase tracking-wider">Guests</p>
+              </div>
+              <div className="w-px h-10 bg-white/20" />
+              <div className="text-center">
+                <p className="text-2xl font-heading font-bold text-gold-light">4.8★</p>
+                <p className="text-xs text-white/70 uppercase tracking-wider">Rated</p>
+              </div>
+              <div className="w-px h-10 bg-white/20" />
+              <div className="text-center">
+                <p className="text-2xl font-heading font-bold text-gold-light">24/7</p>
+                <p className="text-xs text-white/70 uppercase tracking-wider">Service</p>
               </div>
             </div>
           </div>
 
-          {/* Scroll indicator */}
           <button
             onClick={() => scrollTo("about")}
-            className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
+            className="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/70 hover:text-white transition-colors"
             aria-label="Scroll down"
           >
             <span className="text-[10px] uppercase tracking-[0.2em] font-medium">Scroll</span>

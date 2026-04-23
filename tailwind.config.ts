@@ -102,6 +102,10 @@ export default {
           "0%, 100%": { boxShadow: "0 0 20px hsl(42 90% 55% / 0.2)" },
           "50%": { boxShadow: "0 0 40px hsl(42 90% 55% / 0.4)" },
         },
+        "pan-x": {
+          "0%, 100%": { transform: "scale(1.15) translateX(-4%)" },
+          "50%": { transform: "scale(1.15) translateX(4%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -110,6 +114,7 @@ export default {
         shimmer: "shimmer 2s infinite linear",
         float: "float 3s ease-in-out infinite",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "pan-x": "pan-x 30s ease-in-out infinite",
       },
     },
   },
