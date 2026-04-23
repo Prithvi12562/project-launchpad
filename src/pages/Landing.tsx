@@ -776,8 +776,35 @@ const Landing = () => {
           <div className="text-center mt-10">
             <div className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-secondary/50 text-muted-foreground">
               <MapPin className="h-4 w-4 text-primary shrink-0" />
-              <span className="text-sm">Sadhaura Road, VPO Dhanaura, Barara, Ambala, Haryana, India</span>
+              <span className="text-sm">VPO Dhanaura, Sadhaura Road, Barara, Ambala, Haryana, India</span>
             </div>
+          </div>
+
+          {/* Google Maps */}
+          <div className="mt-12">
+            <a
+              href="https://www.google.com/maps/search/?api=1&query=Royal+Plaza+Hotels+VPO+Dhanaura+Sadhaura+Road+Barara+Ambala+Haryana"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative block rounded-3xl overflow-hidden border border-border/60 shadow-xl hover-lift"
+              aria-label="Open location in Google Maps"
+            >
+              <iframe
+                title="Royal Plaza Hotels location"
+                src="https://www.google.com/maps?q=VPO+Dhanaura+Sadhaura+Road+Barara+Ambala+Haryana&output=embed"
+                width="100%"
+                height="380"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="w-full block pointer-events-none"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute bottom-4 right-4 flex items-center gap-2 px-4 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 group-hover:scale-105 transition-transform">
+                <MapPin className="h-4 w-4" />
+                Get Directions
+                <ArrowRight className="h-4 w-4" />
+              </div>
+            </a>
           </div>
         </div>
       </section>
