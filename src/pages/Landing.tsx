@@ -781,29 +781,26 @@ const Landing = () => {
           </div>
 
           {/* Google Maps */}
-          <div className="mt-12">
+          <div className="mt-12 group relative rounded-3xl overflow-hidden border border-border/60 shadow-xl hover-lift">
+            <iframe
+              title="Royal Plaza Hotels location"
+              src="https://maps.google.com/maps?q=VPO+Dhanaura+Sadhaura+Road+Barara+Ambala+Haryana&t=&z=14&ie=UTF8&iwloc=&output=embed"
+              width="100%"
+              height="380"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="w-full block"
+            />
             <a
-              href="https://www.google.com/maps/search/?api=1&query=Royal+Plaza+Hotels+VPO+Dhanaura+Sadhaura+Road+Barara+Ambala+Haryana"
+              href="https://maps.google.com/?daddr=VPO+Dhanaura+Sadhaura+Road+Barara+Ambala+Haryana"
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative block rounded-3xl overflow-hidden border border-border/60 shadow-xl hover-lift"
-              aria-label="Open location in Google Maps"
+              className="absolute bottom-4 right-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:scale-105 transition-transform"
+              aria-label="Get directions on Google Maps"
             >
-              <iframe
-                title="Royal Plaza Hotels location"
-                src="https://www.google.com/maps?q=VPO+Dhanaura+Sadhaura+Road+Barara+Ambala+Haryana&output=embed"
-                width="100%"
-                height="380"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="w-full block pointer-events-none"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="absolute bottom-4 right-4 flex items-center gap-2 px-4 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 group-hover:scale-105 transition-transform">
-                <MapPin className="h-4 w-4" />
-                Get Directions
-                <ArrowRight className="h-4 w-4" />
-              </div>
+              <MapPin className="h-4 w-4" />
+              Get Directions
+              <ArrowRight className="h-4 w-4" />
             </a>
           </div>
         </div>
