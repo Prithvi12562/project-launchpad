@@ -783,22 +783,46 @@ const Landing = () => {
           {/* Google Maps */}
           <div className="mt-12 group relative rounded-3xl overflow-hidden border border-border/60 shadow-xl hover-lift">
             <iframe
-              title="Royal Plaza Hotels location"
-              src="https://maps.google.com/maps?q=VPO+Dhanaura+Sadhaura+Road+Barara+Ambala+Haryana&t=&z=14&ie=UTF8&iwloc=&output=embed"
+              title="Royal Plaza Hotels location — Dhanaura, Barara, Ambala"
+              src="https://maps.google.com/maps?q=Royal+Plaza+Hotels+Dhanaura+Sadhaura+Road+Barara+Ambala+Haryana+India&t=m&z=15&ie=UTF8&iwloc=B&output=embed"
               width="100%"
-              height="380"
+              height="420"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               className="w-full block"
             />
+            {/* Hotel location pin overlay */}
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+              <div className="flex flex-col items-center -translate-y-4">
+                <div className="px-3 py-1.5 rounded-full bg-card/95 backdrop-blur-sm border border-accent/40 shadow-lg text-xs font-semibold text-foreground whitespace-nowrap">
+                  Royal Plaza Hotels
+                </div>
+                <div className="relative mt-1">
+                  <MapPin className="h-10 w-10 text-accent drop-shadow-[0_4px_8px_rgba(0,0,0,0.4)] fill-accent/30" strokeWidth={2.5} />
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-accent/40 animate-ping" />
+                </div>
+              </div>
+            </div>
+
             <a
-              href="https://maps.google.com/?daddr=VPO+Dhanaura+Sadhaura+Road+Barara+Ambala+Haryana"
+              href="https://www.google.com/maps/search/?api=1&query=Royal+Plaza+Hotels+Dhanaura+Sadhaura+Road+Barara+Ambala+Haryana"
               target="_blank"
               rel="noopener noreferrer"
               className="absolute bottom-4 right-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:scale-105 transition-transform"
-              aria-label="Get directions on Google Maps"
+              aria-label="View Royal Plaza Hotels on Google Maps"
             >
               <MapPin className="h-4 w-4" />
+              View on Google Maps
+              <ArrowRight className="h-4 w-4" />
+            </a>
+
+            <a
+              href="https://www.google.com/maps/dir/?api=1&destination=Royal+Plaza+Hotels+Dhanaura+Sadhaura+Road+Barara+Ambala+Haryana"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute bottom-4 left-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-card/95 backdrop-blur-sm border border-border text-foreground text-sm font-semibold shadow-lg hover:scale-105 transition-transform"
+              aria-label="Get directions to Royal Plaza Hotels"
+            >
               Get Directions
               <ArrowRight className="h-4 w-4" />
             </a>
