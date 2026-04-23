@@ -332,8 +332,8 @@ const Landing = () => {
         </div>
 
         {/* Lightened purple tint overlays */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-dark/70 via-primary/55 to-purple-dark/75" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-dark/35 via-primary/25 to-purple-dark/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-background/10 to-transparent" />
 
         {/* Ambient glow blobs */}
         <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-primary/30 blur-3xl" />
