@@ -322,18 +322,17 @@ const Landing = () => {
 
       {/* ═══════════════════ HERO ═══════════════════ */}
       <section id="home" className="relative min-h-screen overflow-hidden">
-        {/* Panning background image */}
-        <div className="absolute inset-0">
+        {/* Static background image */}
+        <div className="absolute inset-0 bg-background">
           <img
             src={exteriorImg}
             alt="Royal Plaza Hotels Exterior"
-            className="w-full h-full object-cover object-top animate-pan-x"
+            className="w-full h-full object-contain object-center"
           />
         </div>
 
-        {/* Lightened purple tint overlays */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-dark/35 via-primary/25 to-purple-dark/40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-background/10 to-transparent" />
+        {/* Subtle bottom fade for text legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-background/10 to-transparent" />
 
         {/* Ambient glow blobs */}
         <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-primary/30 blur-3xl" />
