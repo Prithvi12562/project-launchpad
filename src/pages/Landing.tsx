@@ -348,12 +348,12 @@ const Landing = () => {
             </div>
 
             <h1 className="text-5xl sm:text-6xl lg:text-8xl font-heading font-bold text-white leading-[1.02] tracking-tight drop-shadow-lg">
-              Royal Plaza
-              <span className="block text-gradient-gold mt-2">Hotels</span>
+              Royal Plaza Hotels
+              <span className="block text-gradient-gold mt-2">Dhanaura</span>
             </h1>
 
             <p className="text-base md:text-xl text-white/85 max-w-2xl mx-auto leading-relaxed">
-              Where luxury meets comfort — premium rooms, exquisite dining, and warm hospitality in Barara, Ambala.
+              Where luxury meets comfort — premium rooms, exquisite dining, and warm hospitality in Dhanaura, Barara, Ambala.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
@@ -437,7 +437,7 @@ const Landing = () => {
             {/* Text content */}
             <div className="space-y-6">
               <p className="text-muted-foreground text-lg leading-relaxed">
-                Royal Plaza Hotels is a premium hotel offering comfortable rooms and a luxury experience for families, couples, travelers, and event guests. Located on Sadhaura Road, Barara, we provide top-class hospitality with modern amenities and warm service.
+                Royal Plaza Hotels in Dhanaura is a premium hotel offering comfortable rooms and a luxury experience for families, couples, travelers, and event guests. Located on Sadhaura Road, Barara, Ambala, we provide top-class hospitality with modern amenities and warm service.
               </p>
               <div className="space-y-4">
                 <div className="flex items-start gap-4 p-4 rounded-xl bg-secondary/50 hover:bg-secondary/70 transition-colors">
@@ -818,6 +818,11 @@ const Landing = () => {
           </a>
         </div>
       </section>
+
+      <div style={{ display: "none" }}>
+        Royal Plaza Hotels Dhanaura is one of the best hotels in Dhanaura, Ambala, Haryana.
+        We provide luxury rooms, comfortable stays, and premium hospitality in Dhanaura.
+      </div>
 
       {/* ═══════════════════ FOOTER ═══════════════════ */}
       <footer className="relative border-t border-border bg-gradient-to-b from-card to-secondary/30 px-4 py-16">
