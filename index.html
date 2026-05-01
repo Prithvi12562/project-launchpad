@@ -1,77 +1,159 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+<meta charset="UTF-8">
+<title>Royal Plaza Hotels</title>
 
-    <title>Royal Plaza Hotel Dhanaura | Best Hotel in Barara Ambala Haryana</title>
-    <meta
-      name="description"
-      content="Royal Plaza Hotel Dhanaura offers luxury AC rooms, comfortable stays, parking, and premium hospitality in Barara Ambala. Book your stay today."
-    />
-    <meta name="author" content="Royal Plaza Hotels" />
-    <meta name="keywords" content="Royal Plaza Hotel Dhanaura, hotel in Dhanaura, hotel in Barara Ambala, best hotel in Dhanaura, hotels near Barara, hotel booking Dhanaura, luxury hotel Ambala Haryana" />
-    <link rel="canonical" href="https://royalplazahotels.in/" />
+<link rel="stylesheet" href="style.css">
 
-    <meta property="og:title" content="Royal Plaza Hotel Dhanaura | Best Hotel in Barara Ambala Haryana" />
-    <meta property="og:description" content="Royal Plaza Hotel Dhanaura offers luxury AC rooms, comfortable stays, parking, and premium hospitality in Barara Ambala. Book your stay today." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://royalplazahotels.in/" />
-    <meta property="og:image" content="https://royalplazahotels.in/og-image.jpg" />
-    <meta property="og:site_name" content="Royal Plaza Hotels" />
-    <meta property="og:locale" content="en_IN" />
+<!-- Luxury Font -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Royal Plaza Hotel Dhanaura | Best Hotel in Barara Ambala Haryana" />
-    <meta name="twitter:description" content="Royal Plaza Hotel Dhanaura offers luxury AC rooms, comfortable stays, parking, and premium hospitality in Barara Ambala. Book your stay today." />
-    <meta name="twitter:image" content="https://royalplazahotels.in/og-image.jpg" />
+</head>
 
-    <link rel="icon" href="data:," />
+<body>
 
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Hotel",
-      "name": "Royal Plaza Hotels",
-      "description": "Royal Plaza Hotel Dhanaura offers luxury AC rooms, comfortable stays, parking, and premium hospitality in Barara, Ambala, Haryana.",
-      "url": "https://royalplazahotels.in",
-      "telephone": "+918288808857",
-      "email": "ranaabhishek1988@gmail.com",
-      "priceRange": "₹1500 - ₹4500",
-      "starRating": {
-        "@type": "Rating",
-        "ratingValue": "4.8"
-      },
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Sadhaura Road, VPO Dhanaura",
-        "addressLocality": "Barara",
-        "addressRegion": "Haryana",
-        "postalCode": "133203",
-        "addressCountry": "IN"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": "30.3568",
-        "longitude": "77.0511"
-      },
-      "amenityFeature": [
-        {"@type": "LocationFeatureSpecification", "name": "Free WiFi"},
-        {"@type": "LocationFeatureSpecification", "name": "AC Rooms"},
-        {"@type": "LocationFeatureSpecification", "name": "Swimming Pool"},
-        {"@type": "LocationFeatureSpecification", "name": "Restaurant"},
-        {"@type": "LocationFeatureSpecification", "name": "Free Parking"},
-        {"@type": "LocationFeatureSpecification", "name": "Banquet Hall"}
-      ],
-      "checkinTime": "12:00",
-      "checkoutTime": "12:00",
-      "image": "https://royalplazahotels.in/og-image.jpg"
-    }
-    </script>
-  </head>
+<!-- HEADER -->
+<header class="header">
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <div class="logo-box">
+    <div class="logo-circle">RP</div>
+    <h2>Royal Plaza Hotels</h2>
+  </div>
+
+  <nav class="nav">
+    <a href="#">HOME</a>
+    <a href="#">ABOUT</a>
+    <a href="#">ROOMS</a>
+    <a href="#">GALLERY</a>
+    <a href="#">CONTACT</a>
+  </nav>
+
+  <button class="book-btn">BOOK NOW</button>
+
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="overlay">
+
+    <p class="top-text">WELCOME TO LUXURY</p>
+
+    <h1>Royal Plaza Hotels</h1>
+
+    <p class="subtitle">
+      Elegant Comfort in Barara – Where Premium Service Meets Classic Elegance.
+    </p>
+
+    <button class="reserve">RESERVE YOUR STAY</button>
+
+  </div>
+</section>
+
+<!-- BOOKING BAR -->
+<form name="room-booking" method="POST" data-netlify="true" class="booking">
+
+  <!-- REQUIRED hidden inputs for Netlify -->
+  <input type="hidden" name="form-name" value="room-booking" />
+
+  <!-- Optional spam protection -->
+  <input type="hidden" name="bot-field" />
+
+  <div class="field">
+    <label>FULL NAME</label>
+    <input type="text" id="name" name="name" placeholder="John Doe" required>
+  </div>
+
+  <div class="field">
+    <label>EMAIL ADDRESS</label>
+    <input type="email" id="email" name="email" placeholder="email@example.com" required>
+  </div>
+
+  <div class="field">
+    <label>ROOM TYPE</label>
+    <select id="room" name="room">
+      <option value="1500">Deluxe - ₹1500</option>
+      <option value="4500">Super Deluxe - ₹4500</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label>CHECK-IN</label>
+    <input type="date" id="checkin" name="checkin" required>
+  </div>
+
+  <div class="field">
+    <label>CHECK-OUT</label>
+    <input type="date" id="checkout" name="checkout" required>
+  </div>
+
+  <button type="submit" class="confirm">CONFIRM AVAILABILITY</button>
+
+</form>
+
+<!-- ABOUT -->
+<section class="about">
+
+  <div class="about-img">
+    <img src="images/room.jpg">
+  </div>
+
+  <div class="about-text">
+
+    <p class="small">OUR STORY</p>
+
+    <h2>Luxury in the Heart of Ambala</h2>
+
+    <p>
+      Welcome to Royal Plaza Hotels, where premium service meets classic elegance.
+      Located in Dhanaura, Barara, we offer a peaceful environment perfect for both leisure and events.
+    </p>
+
+    <p>
+      Our facilities include a multi-cuisine restaurant, AC rooms, swimming pool, and dedicated halls.
+    </p>
+
+    <div class="info">
+      <div>
+        <h4>Nearby Landmarks</h4>
+        <p>Dhanaura Bus Stand & Hanuman Mandir</p>
+      </div>
+
+      <div>
+        <h4>Check-In Time</h4>
+        <p>12:00 PM Sharp</p>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ROOMS -->
+<section class="rooms">
+
+  <h2>Elite Accommodations</h2>
+
+  <div class="room-container">
+
+    <div class="card">
+      <span class="tag">Best Seller</span>
+      <img src="images/bathroom.jpg">
+      <h3>Super Deluxe Room</h3>
+      <p class="price">₹4500 / night</p>
+      <p>Premium AC room with pool access and luxury comfort.</p>
+    </div>
+
+    <div class="card">
+      <img src="images/hotel-sign.jpg">
+      <h3>Deluxe Room</h3>
+      <p class="price">₹1500 / night</p>
+      <p>Comfortable stay with modern facilities and full AC.</p>
+    </div>
+
+  </div>
+
+</section>
+
+</body>
 </html>
