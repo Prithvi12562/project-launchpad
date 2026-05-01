@@ -347,9 +347,9 @@ const Landing = () => {
               </span>
             </div>
 
-            <h1 className="text-5xl sm:text-6xl lg:text-8xl font-heading font-bold text-white leading-[1.02] tracking-tight drop-shadow-lg">
-              Royal Plaza Hotels
-              <span className="block text-gradient-gold mt-2">Dhanaura</span>
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-heading font-bold text-white leading-[1.02] tracking-tight drop-shadow-lg">
+              Royal Plaza
+              <span className="block text-gradient-gold mt-2">Hotels</span>
             </h1>
 
             <p className="text-base md:text-xl text-white/85 max-w-2xl mx-auto leading-relaxed">
