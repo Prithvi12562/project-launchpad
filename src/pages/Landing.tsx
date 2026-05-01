@@ -44,14 +44,14 @@ const AMENITIES = [
 ];
 
 const GALLERY_IMAGES = [
-  { src: receptionImg, alt: "Hotel Reception" },
-  { src: hallwayImg, alt: "Hotel Hallway" },
-  { src: restaurantImg, alt: "Restaurant" },
-  { src: insideRoomImg, alt: "Room Interior" },
-  { src: bathroomImg, alt: "Bathroom" },
-  { src: room3Img, alt: "Room View" },
-  { src: room4Img, alt: "Room View" },
-  { src: room2Img, alt: "Room View" },
+  { src: receptionImg, alt: "Reception area at Royal Plaza Hotel Dhanaura" },
+  { src: hallwayImg, alt: "Hallway of Royal Plaza Hotel in Barara Ambala" },
+  { src: restaurantImg, alt: "Restaurant at Royal Plaza Hotel Dhanaura" },
+  { src: insideRoomImg, alt: "Luxury room interior at Royal Plaza Hotel Dhanaura" },
+  { src: bathroomImg, alt: "Modern bathroom at Royal Plaza Hotel Barara" },
+  { src: room3Img, alt: "Deluxe room at Royal Plaza Hotel Dhanaura Ambala" },
+  { src: room4Img, alt: "AC room at best hotel in Dhanaura" },
+  { src: room2Img, alt: "Super Deluxe room at Royal Plaza Hotel Barara" },
 ];
 
 const ROOM_TYPES = [
@@ -326,7 +326,7 @@ const Landing = () => {
         <div className="absolute inset-0 bg-background">
           <img
             src={exteriorImg}
-            alt="Royal Plaza Hotels Exterior"
+            alt="Royal Plaza Hotel Dhanaura exterior - best hotel in Barara Ambala Haryana"
             className="w-full h-full object-contain object-center"
           />
         </div>
@@ -353,7 +353,7 @@ const Landing = () => {
             </h1>
 
             <p className="text-base md:text-xl text-white/85 max-w-2xl mx-auto leading-relaxed">
-              Where luxury meets comfort — premium rooms, exquisite dining, and warm hospitality in Dhanaura, Barara, Ambala.
+              The best hotel in Dhanaura — luxury AC rooms, exquisite dining, and warm hospitality in Barara, Ambala, Haryana.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
@@ -417,8 +417,8 @@ const Landing = () => {
             {/* Image collage */}
             <div className="relative">
               <div className="grid grid-cols-2 gap-3">
-                <img src={receptionImg} alt="Reception" className="w-full h-48 object-cover rounded-2xl shadow-lg" />
-                <img src={restaurantImg} alt="Restaurant" className="w-full h-48 object-cover rounded-2xl shadow-lg mt-8" />
+                <img src={receptionImg} alt="Reception at Royal Plaza Hotel Dhanaura" className="w-full h-48 object-cover rounded-2xl shadow-lg" />
+                <img src={restaurantImg} alt="Restaurant at Royal Plaza Hotel Barara Ambala" className="w-full h-48 object-cover rounded-2xl shadow-lg mt-8" />
               </div>
               {/* Floating stat card */}
               <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 glass rounded-2xl px-8 py-4 flex items-center gap-6 shadow-xl">
@@ -437,7 +437,7 @@ const Landing = () => {
             {/* Text content */}
             <div className="space-y-6">
               <p className="text-muted-foreground text-lg leading-relaxed">
-                Royal Plaza Hotels in Dhanaura is a premium hotel offering comfortable rooms and a luxury experience for families, couples, travelers, and event guests. Located on Sadhaura Road, Barara, Ambala, we provide top-class hospitality with modern amenities and warm service.
+                Royal Plaza Hotel Dhanaura is one of the best hotels in Dhanaura, offering comfortable AC rooms and a luxury experience for families, couples, travelers, and event guests. Located on Sadhaura Road, Barara, Ambala, Haryana, our hotel provides top-class hospitality with modern amenities, free parking, and warm service — making it the ideal choice for hotel booking in Dhanaura.
               </p>
               <div className="space-y-4">
                 <div className="flex items-start gap-4 p-4 rounded-xl bg-secondary/50 hover:bg-secondary/70 transition-colors">
@@ -489,7 +489,7 @@ const Landing = () => {
                 <div className="relative h-72 overflow-hidden">
                   <img
                     src={room.image}
-                    alt={room.name}
+                    alt={`${room.name} at Royal Plaza Hotel Dhanaura Barara`}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
@@ -819,9 +819,8 @@ const Landing = () => {
         </div>
       </section>
 
-      <div style={{ display: "none" }}>
-        Royal Plaza Hotels Dhanaura is one of the best hotels in Dhanaura, Ambala, Haryana.
-        We provide luxury rooms, comfortable stays, and premium hospitality in Dhanaura.
+      <div style={{ display: "none" }} aria-hidden="true">
+        <p>Royal Plaza Hotel Dhanaura is one of the best hotels in Dhanaura, Barara, Ambala, Haryana. We offer luxury rooms, AC rooms, parking, swimming pool, restaurant, and comfortable stays for families, couples, and travelers looking for the best hotel in Dhanaura. Whether you need hotel booking in Dhanaura, hotels near Barara, or a premium hotel in Barara Ambala, Royal Plaza Hotels is your ideal destination. Conveniently located on Sadhaura Road near Dhanaura Bus Stand and Prachin Hanuman Mandir, we provide top-rated hospitality at affordable prices.</p>
       </div>
 
       {/* ═══════════════════ FOOTER ═══════════════════ */}
