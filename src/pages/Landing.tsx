@@ -44,14 +44,14 @@ const AMENITIES = [
 ];
 
 const GALLERY_IMAGES = [
-  { src: receptionImg, alt: "Reception area at Royal Plaza Hotel Dhanaura" },
-  { src: hallwayImg, alt: "Hallway of Royal Plaza Hotel in Barara Ambala" },
-  { src: restaurantImg, alt: "Restaurant at Royal Plaza Hotel Dhanaura" },
-  { src: insideRoomImg, alt: "Luxury room interior at Royal Plaza Hotel Dhanaura" },
-  { src: bathroomImg, alt: "Modern bathroom at Royal Plaza Hotel Barara" },
-  { src: room3Img, alt: "Deluxe room at Royal Plaza Hotel Dhanaura Ambala" },
-  { src: room4Img, alt: "AC room at best hotel in Dhanaura" },
-  { src: room2Img, alt: "Super Deluxe room at Royal Plaza Hotel Barara" },
+  { src: receptionImg, alt: "Hotel Reception" },
+  { src: hallwayImg, alt: "Hotel Hallway" },
+  { src: restaurantImg, alt: "Restaurant" },
+  { src: insideRoomImg, alt: "Room Interior" },
+  { src: bathroomImg, alt: "Bathroom" },
+  { src: room3Img, alt: "Deluxe Room" },
+  { src: room4Img, alt: "AC Room" },
+  { src: room2Img, alt: "Super Deluxe Room" },
 ];
 
 const ROOM_TYPES = [
