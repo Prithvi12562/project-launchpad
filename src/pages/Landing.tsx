@@ -5,7 +5,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Wifi, Wind, Waves, UtensilsCrossed, Car, Building2, Star,
   Phone, Mail, MapPin, Clock, ChevronDown, Send, Menu, X,
@@ -100,7 +102,7 @@ const Landing = () => {
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [upiCopied, setUpiCopied] = useState(false);
   const [bookingForm, setBookingForm] = useState({
-    name: "", phone: "", email: "", checkIn: "", checkOut: "",
+    name: "", phone: "", email: "", checkIn: "", checkOut: "", guests: "1", requests: "",
   });
   const [roomCounts, setRoomCounts] = useState<Record<string, number>>({
     deluxe: 0, "super-deluxe": 0,
@@ -160,9 +162,29 @@ const Landing = () => {
     }
     setBookingSubmitting(true);
     try {
-      await new Promise((r) => setTimeout(r, 1000));
+      const roomSummary = ROOM_TYPES
+        .filter((r) => (roomCounts[r.id] || 0) > 0)
+        .map((r) => `${roomCounts[r.id]} × ${r.name}`)
+        .join(", ");
+      const { error } = await supabase.functions.invoke("send-booking-email", {
+        body: {
+          guest_name: bookingForm.name,
+          guest_email: bookingForm.email || "",
+          guest_phone: bookingForm.phone,
+          room_type: roomSummary,
+          check_in: bookingForm.checkIn,
+          check_out: bookingForm.checkOut,
+          num_guests: Math.max(1, parseInt(bookingForm.guests || "1", 10)),
+          special_requests: bookingForm.requests || "",
+          total_price: totalPrice,
+        },
+      });
+      if (error) throw error;
       setBookingSuccess(true);
       toast({ title: "Booking request sent!", description: "Complete payment via UPI below." });
+    } catch (e) {
+      console.error(e);
+      toast({ title: "Could not send booking", description: "Please try again or contact us.", variant: "destructive" });
     } finally {
       setBookingSubmitting(false);
     }
@@ -170,7 +192,7 @@ const Landing = () => {
 
   const resetBooking = () => {
     setBookingSuccess(false);
-    setBookingForm({ name: "", phone: "", email: "", checkIn: "", checkOut: "" });
+    setBookingForm({ name: "", phone: "", email: "", checkIn: "", checkOut: "", guests: "1", requests: "" });
     setRoomCounts({ deluxe: 0, "super-deluxe": 0 });
   };
 
@@ -649,6 +671,16 @@ const Landing = () => {
                     <Label htmlFor="b-checkout" className="text-sm font-medium">Check-out Date *</Label>
                     <Input id="b-checkout" type="date" className="rounded-xl h-11" value={bookingForm.checkOut} min={bookingForm.checkIn || new Date().toISOString().split("T")[0]} onChange={(e) => setBookingForm({ ...bookingForm, checkOut: e.target.value })} />
                   </div>
+                </div>
+
+                {/* Guests + Requests */}
+                <div className="space-y-2">
+                  <Label htmlFor="b-guests" className="text-sm font-medium">Number of Guests *</Label>
+                  <Input id="b-guests" type="number" min={1} max={20} className="rounded-xl h-11" value={bookingForm.guests} onChange={(e) => setBookingForm({ ...bookingForm, guests: e.target.value })} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="b-requests" className="text-sm font-medium">Special Requests</Label>
+                  <Textarea id="b-requests" placeholder="Any preferences or notes…" className="rounded-xl min-h-[88px]" value={bookingForm.requests} onChange={(e) => setBookingForm({ ...bookingForm, requests: e.target.value })} />
                 </div>
 
                 {/* Price summary */}
