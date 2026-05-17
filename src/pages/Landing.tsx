@@ -162,9 +162,29 @@ const Landing = () => {
     }
     setBookingSubmitting(true);
     try {
-      await new Promise((r) => setTimeout(r, 1000));
+      const roomSummary = ROOM_TYPES
+        .filter((r) => (roomCounts[r.id] || 0) > 0)
+        .map((r) => `${roomCounts[r.id]} × ${r.name}`)
+        .join(", ");
+      const { error } = await supabase.functions.invoke("send-booking-email", {
+        body: {
+          guest_name: bookingForm.name,
+          guest_email: bookingForm.email || "",
+          guest_phone: bookingForm.phone,
+          room_type: roomSummary,
+          check_in: bookingForm.checkIn,
+          check_out: bookingForm.checkOut,
+          num_guests: Math.max(1, parseInt(bookingForm.guests || "1", 10)),
+          special_requests: bookingForm.requests || "",
+          total_price: totalPrice,
+        },
+      });
+      if (error) throw error;
       setBookingSuccess(true);
       toast({ title: "Booking request sent!", description: "Complete payment via UPI below." });
+    } catch (e) {
+      console.error(e);
+      toast({ title: "Could not send booking", description: "Please try again or contact us.", variant: "destructive" });
     } finally {
       setBookingSubmitting(false);
     }
@@ -172,7 +192,7 @@ const Landing = () => {
 
   const resetBooking = () => {
     setBookingSuccess(false);
-    setBookingForm({ name: "", phone: "", email: "", checkIn: "", checkOut: "" });
+    setBookingForm({ name: "", phone: "", email: "", checkIn: "", checkOut: "", guests: "1", requests: "" });
     setRoomCounts({ deluxe: 0, "super-deluxe": 0 });
   };
 
