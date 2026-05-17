@@ -100,7 +100,7 @@ const Landing = () => {
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [upiCopied, setUpiCopied] = useState(false);
   const [bookingForm, setBookingForm] = useState({
-    name: "", phone: "", email: "", checkIn: "", checkOut: "",
+    name: "", phone: "", email: "", checkIn: "", checkOut: "", guests: "1", requests: "",
   });
   const [roomCounts, setRoomCounts] = useState<Record<string, number>>({
     deluxe: 0, "super-deluxe": 0,
