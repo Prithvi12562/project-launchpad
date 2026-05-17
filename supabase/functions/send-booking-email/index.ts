@@ -14,7 +14,9 @@ const BodySchema = z.object({
   total_price: z.number().optional(),
 })
 
-const HOTEL_EMAIL = 'ranaabhishek1988@gmail.com'
+// TEMPORARY: Resend sandbox only allows sending to the account owner email.
+// Once a domain is verified at resend.com/domains, change this to ranaabhishek1988@gmail.com.
+const HOTEL_EMAIL = 'prithvirajch2013@gmail.com'
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
