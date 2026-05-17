@@ -670,7 +670,19 @@ const Landing = () => {
                   <div className="space-y-2">
                     <Label htmlFor="b-checkout" className="text-sm font-medium">Check-out Date *</Label>
                     <Input id="b-checkout" type="date" className="rounded-xl h-11" value={bookingForm.checkOut} min={bookingForm.checkIn || new Date().toISOString().split("T")[0]} onChange={(e) => setBookingForm({ ...bookingForm, checkOut: e.target.value })} />
+                </div>
+
+                {/* Guests + Requests */}
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="b-guests" className="text-sm font-medium">Number of Guests *</Label>
+                    <Input id="b-guests" type="number" min={1} max={20} className="rounded-xl h-11" value={bookingForm.guests} onChange={(e) => setBookingForm({ ...bookingForm, guests: e.target.value })} />
                   </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="b-requests" className="text-sm font-medium">Special Requests</Label>
+                  <Textarea id="b-requests" placeholder="Any preferences or notes…" className="rounded-xl min-h-[88px]" value={bookingForm.requests} onChange={(e) => setBookingForm({ ...bookingForm, requests: e.target.value })} />
+                </div>
                 </div>
 
                 {/* Price summary */}
