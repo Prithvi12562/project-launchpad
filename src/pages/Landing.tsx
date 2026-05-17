@@ -5,7 +5,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Wifi, Wind, Waves, UtensilsCrossed, Car, Building2, Star,
   Phone, Mail, MapPin, Clock, ChevronDown, Send, Menu, X,
