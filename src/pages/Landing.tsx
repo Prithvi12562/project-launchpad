@@ -51,14 +51,14 @@ const GALLERY_IMAGES = [
   { src: restaurantImg, alt: "Restaurant" },
   { src: insideRoomImg, alt: "Room Interior" },
   { src: bathroomImg, alt: "Bathroom" },
-  { src: room3Img, alt: "Deluxe Room" },
-  { src: room4Img, alt: "AC Room" },
-  { src: room2Img, alt: "Super Deluxe Room" },
+  { src: room3Img, alt: "AC Room" },
+  { src: room4Img, alt: "Super Deluxe Room" },
+  { src: room2Img, alt: "Deluxe Room" },
 ];
 
 const ROOM_TYPES = [
-  { id: "deluxe", name: "Deluxe Room", price: 1500, image: roomImg, description: "AC room with attached bathroom, TV, and all modern facilities for a comfortable stay.", bestSeller: false },
-  { id: "super-deluxe", name: "Super Deluxe Room", price: 4500, image: room2Img, description: "Premium AC room with swimming pool access, attached bathroom, TV, and luxury amenities.", bestSeller: true },
+  { id: "deluxe", name: "Deluxe Room", price: 1500, image: room3Img, description: "AC room with attached bathroom, TV, and all modern facilities for a comfortable stay.", bestSeller: false },
+  { id: "super-deluxe", name: "Super Deluxe Room", price: 4500, image: room4Img, description: "Premium AC room with swimming pool access, attached bathroom, TV, and luxury amenities.", bestSeller: true },
 ];
 
 const UPI_ID = "royalplazahotels@upi";
