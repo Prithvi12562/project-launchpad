@@ -349,12 +349,12 @@ const Landing = () => {
           <img
             src={exteriorImg}
             alt="Royal Plaza Hotel Dhanaura exterior - best hotel in Barara Ambala Haryana"
-            className="w-full h-full object-cover object-center"
+            className="w-full h-full object-contain object-center"
           />
         </div>
 
-        {/* Overlay for text legibility over the enlarged photo */}
-        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/30 to-background/70" />
+        {/* Subtle bottom fade for text legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-background/10 to-transparent" />
 
         {/* Ambient glow blobs */}
         <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-primary/30 blur-3xl" />
