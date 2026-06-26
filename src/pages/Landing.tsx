@@ -51,9 +51,9 @@ const GALLERY_IMAGES = [
   { src: restaurantImg, alt: "Restaurant" },
   { src: insideRoomImg, alt: "Room Interior" },
   { src: bathroomImg, alt: "Bathroom" },
-  { src: room3Img, alt: "Deluxe Room" },
-  { src: room4Img, alt: "AC Room" },
-  { src: room2Img, alt: "Super Deluxe Room" },
+  { src: room3Img, alt: "AC Room" },
+  { src: room4Img, alt: "Super Deluxe Room" },
+  { src: room2Img, alt: "Deluxe Room" },
 ];
 
 const ROOM_TYPES = [
