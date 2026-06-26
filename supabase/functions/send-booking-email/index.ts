@@ -55,7 +55,10 @@ Deno.serve(async (req) => {
       })
       .select('id, created_at')
       .single()
-    if (insertErr) throw new Error(`DB insert failed: ${insertErr.message}`)
+    if (insertErr) {
+      console.error('DB insert failed', insertErr)
+      throw new Error('Failed to save booking')
+    }
 
     const html = `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;color:#1a1a1a">
@@ -92,7 +95,7 @@ Deno.serve(async (req) => {
     const resendBody = await resendRes.json()
     if (!resendRes.ok) {
       console.error('Resend failed', resendRes.status, resendBody)
-      return new Response(JSON.stringify({ ok: false, booking_id: row.id, error: resendBody }), {
+      return new Response(JSON.stringify({ ok: false, booking_id: row.id, error: 'Email delivery failed' }), {
         status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
     }
@@ -104,8 +107,7 @@ Deno.serve(async (req) => {
     })
   } catch (err) {
     console.error(err)
-    const msg = err instanceof Error ? err.message : 'Unknown error'
-    return new Response(JSON.stringify({ error: msg }), {
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
