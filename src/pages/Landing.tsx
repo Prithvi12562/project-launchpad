@@ -57,8 +57,8 @@ const GALLERY_IMAGES = [
 ];
 
 const ROOM_TYPES = [
-  { id: "deluxe", name: "Deluxe Room", price: 1500, image: roomImg, description: "AC room with attached bathroom, TV, and all modern facilities for a comfortable stay.", bestSeller: false },
-  { id: "super-deluxe", name: "Super Deluxe Room", price: 4500, image: room2Img, description: "Premium AC room with swimming pool access, attached bathroom, TV, and luxury amenities.", bestSeller: true },
+  { id: "deluxe", name: "Deluxe Room", price: 1500, image: room3Img, description: "AC room with attached bathroom, TV, and all modern facilities for a comfortable stay.", bestSeller: false },
+  { id: "super-deluxe", name: "Super Deluxe Room", price: 4500, image: room4Img, description: "Premium AC room with swimming pool access, attached bathroom, TV, and luxury amenities.", bestSeller: true },
 ];
 
 const UPI_ID = "royalplazahotels@upi";
