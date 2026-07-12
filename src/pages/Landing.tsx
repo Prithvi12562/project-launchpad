@@ -370,8 +370,8 @@ const Landing = () => {
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-heading font-bold text-white leading-[1.02] tracking-tight drop-shadow-lg">
-              Royal Plaza
-              <span className="block text-gradient-gold mt-2">Hotels</span>
+              Royal Plaza Hotels
+              <span className="block text-gradient-gold mt-2 text-2xl sm:text-3xl lg:text-4xl">Luxury Stay in Dhanaura, Barara</span>
             </h1>
 
             <p className="text-base md:text-xl text-white/85 max-w-2xl mx-auto leading-relaxed">
@@ -627,15 +627,17 @@ const Landing = () => {
                         <button
                           type="button"
                           onClick={() => updateRoomCount(room.id, -1)}
+                          aria-label={`Decrease ${room.name} count`}
                           className="flex h-9 w-9 items-center justify-center rounded-xl border border-border text-muted-foreground hover:bg-secondary hover:border-primary/30 transition-all disabled:opacity-30"
                           disabled={!roomCounts[room.id]}
                         >
                           <Minus className="h-4 w-4" />
                         </button>
-                        <span className="w-6 text-center font-bold text-lg text-foreground">{roomCounts[room.id] || 0}</span>
+                        <span className="w-6 text-center font-bold text-lg text-foreground" aria-live="polite">{roomCounts[room.id] || 0}</span>
                         <button
                           type="button"
                           onClick={() => updateRoomCount(room.id, 1)}
+                          aria-label={`Increase ${room.name} count`}
                           className="flex h-9 w-9 items-center justify-center rounded-xl border border-border text-muted-foreground hover:bg-secondary hover:border-primary/30 transition-all"
                         >
                           <Plus className="h-4 w-4" />
