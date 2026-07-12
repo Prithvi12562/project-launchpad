@@ -627,15 +627,17 @@ const Landing = () => {
                         <button
                           type="button"
                           onClick={() => updateRoomCount(room.id, -1)}
+                          aria-label={`Decrease ${room.name} count`}
                           className="flex h-9 w-9 items-center justify-center rounded-xl border border-border text-muted-foreground hover:bg-secondary hover:border-primary/30 transition-all disabled:opacity-30"
                           disabled={!roomCounts[room.id]}
                         >
                           <Minus className="h-4 w-4" />
                         </button>
-                        <span className="w-6 text-center font-bold text-lg text-foreground">{roomCounts[room.id] || 0}</span>
+                        <span className="w-6 text-center font-bold text-lg text-foreground" aria-live="polite">{roomCounts[room.id] || 0}</span>
                         <button
                           type="button"
                           onClick={() => updateRoomCount(room.id, 1)}
+                          aria-label={`Increase ${room.name} count`}
                           className="flex h-9 w-9 items-center justify-center rounded-xl border border-border text-muted-foreground hover:bg-secondary hover:border-primary/30 transition-all"
                         >
                           <Plus className="h-4 w-4" />
