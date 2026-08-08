@@ -46,14 +46,14 @@ const AMENITIES = [
 ];
 
 const GALLERY_IMAGES = [
-  { src: receptionImg, alt: "Hotel Reception" },
-  { src: hallwayImg, alt: "Hotel Hallway" },
-  { src: restaurantImg, alt: "Restaurant" },
-  { src: insideRoomImg, alt: "Room Interior" },
-  { src: bathroomImg, alt: "Bathroom" },
-  { src: room3Img, alt: "AC Room" },
-  { src: room4Img, alt: "Super Deluxe Room" },
-  { src: room2Img, alt: "Deluxe Room" },
+  { src: receptionImg, alt: "Reception lobby with seating at Royal Plaza Hotels Dhanaura, Barara", label: "Hotel Reception" },
+  { src: hallwayImg, alt: "Well-lit guest room hallway at Royal Plaza Hotels Dhanaura", label: "Hotel Hallway" },
+  { src: restaurantImg, alt: "In-house multi-cuisine restaurant dining area at Royal Plaza Hotels Dhanaura", label: "Restaurant" },
+  { src: insideRoomImg, alt: "Interior of a furnished guest room with double bed at Royal Plaza Hotels Dhanaura", label: "Room Interior" },
+  { src: bathroomImg, alt: "Clean modern attached bathroom in a guest room at Royal Plaza Hotels Dhanaura", label: "Bathroom" },
+  { src: room3Img, alt: "Air-conditioned AC room with double bed and TV at Royal Plaza Hotels Dhanaura", label: "AC Room" },
+  { src: room4Img, alt: "Super Deluxe AC room with premium furnishings at Royal Plaza Hotels Dhanaura", label: "Super Deluxe Room" },
+  { src: room2Img, alt: "Deluxe AC room with attached bathroom at Royal Plaza Hotels Dhanaura", label: "Deluxe Room" },
 ];
 
 const ROOM_TYPES = [
@@ -223,14 +223,15 @@ const Landing = () => {
           <ul className="hidden lg:flex items-center gap-1">
             {NAV_LINKS.map((l) => (
               <li key={l.href}>
-                <button
-                  onClick={() => scrollTo(l.href.slice(1))}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-white/10 ${
+                <a
+                  href={l.href}
+                  onClick={(e) => { e.preventDefault(); scrollTo(l.href.slice(1)); }}
+                  className={`inline-block px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-white/10 ${
                     navScrolled ? "text-muted-foreground hover:text-primary hover:bg-primary/5" : "text-white/80 hover:text-white"
                   }`}
                 >
                   {l.label}
-                </button>
+                </a>
               </li>
             ))}
           </ul>
@@ -306,13 +307,14 @@ const Landing = () => {
               </div>
             )}
             {NAV_LINKS.map((l) => (
-              <button
+              <a
                 key={l.href}
-                onClick={() => scrollTo(l.href.slice(1))}
+                href={l.href}
+                onClick={(e) => { e.preventDefault(); scrollTo(l.href.slice(1)); }}
                 className="block w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
               >
                 {l.label}
-              </button>
+              </a>
             ))}
             <div className="pt-3 mt-3 border-t border-border/50 space-y-1">
               {user ? (
@@ -590,7 +592,7 @@ const Landing = () => {
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                  <span className="text-white text-sm font-medium">{img.alt}</span>
+                  <span className="text-white text-sm font-medium">{img.label}</span>
                 </div>
               </div>
             ))}
@@ -868,20 +870,36 @@ const Landing = () => {
                   <Crown className="h-5 w-5 text-primary-foreground" />
                 </div>
               </div>
-              <h3 className="font-heading text-xl font-bold text-card-foreground">Royal Plaza Hotels</h3>
+              <h3 className="font-heading text-xl font-bold text-card-foreground">Royal Plaza Hotels Dhanaura</h3>
               <p className="text-sm text-muted-foreground font-light">Where Luxury Meets Comfort</p>
+              <address className="not-italic text-sm text-muted-foreground space-y-1 pt-2">
+                <p>Sadhaura Road, VPO Dhanaura, Barara, Ambala, Haryana, India</p>
+                <p>
+                  Phone:{" "}
+                  <a href="tel:+918288808857" className="hover:text-primary transition-colors">
+                    +91 8288808857
+                  </a>
+                </p>
+                <p>
+                  Email:{" "}
+                  <a href="mailto:ranaabhishek1988@gmail.com" className="hover:text-primary transition-colors">
+                    ranaabhishek1988@gmail.com
+                  </a>
+                </p>
+              </address>
             </div>
 
             {/* Nav links */}
             <ul className="flex flex-wrap items-center justify-center gap-2 text-sm">
               {NAV_LINKS.map((l) => (
                 <li key={l.href}>
-                  <button
-                    onClick={() => scrollTo(l.href.slice(1))}
-                    className="px-3 py-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
+                  <a
+                    href={l.href}
+                    onClick={(e) => { e.preventDefault(); scrollTo(l.href.slice(1)); }}
+                    className="px-3 py-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all inline-block"
                   >
                     {l.label}
-                  </button>
+                  </a>
                 </li>
               ))}
             </ul>
