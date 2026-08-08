@@ -868,20 +868,36 @@ const Landing = () => {
                   <Crown className="h-5 w-5 text-primary-foreground" />
                 </div>
               </div>
-              <h3 className="font-heading text-xl font-bold text-card-foreground">Royal Plaza Hotels</h3>
+              <h3 className="font-heading text-xl font-bold text-card-foreground">Royal Plaza Hotels Dhanaura</h3>
               <p className="text-sm text-muted-foreground font-light">Where Luxury Meets Comfort</p>
+              <address className="not-italic text-sm text-muted-foreground space-y-1 pt-2">
+                <p>Sadhaura Road, VPO Dhanaura, Barara, Ambala, Haryana, India</p>
+                <p>
+                  Phone:{" "}
+                  <a href="tel:+918288808857" className="hover:text-primary transition-colors">
+                    +91 8288808857
+                  </a>
+                </p>
+                <p>
+                  Email:{" "}
+                  <a href="mailto:royalplazahotelsdhanaura@gmail.com" className="hover:text-primary transition-colors">
+                    royalplazahotelsdhanaura@gmail.com
+                  </a>
+                </p>
+              </address>
             </div>
 
             {/* Nav links */}
             <ul className="flex flex-wrap items-center justify-center gap-2 text-sm">
               {NAV_LINKS.map((l) => (
                 <li key={l.href}>
-                  <button
-                    onClick={() => scrollTo(l.href.slice(1))}
-                    className="px-3 py-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
+                  <a
+                    href={l.href}
+                    onClick={(e) => { e.preventDefault(); scrollTo(l.href.slice(1)); }}
+                    className="px-3 py-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all inline-block"
                   >
                     {l.label}
-                  </button>
+                  </a>
                 </li>
               ))}
             </ul>
