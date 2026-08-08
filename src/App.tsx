@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import RouteSeo from "@/components/RouteSeo";
 import Layout from "@/components/layout/Layout";
 import Landing from "@/pages/Landing";
 import Login from "@/pages/Login";
