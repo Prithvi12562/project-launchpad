@@ -223,14 +223,15 @@ const Landing = () => {
           <ul className="hidden lg:flex items-center gap-1">
             {NAV_LINKS.map((l) => (
               <li key={l.href}>
-                <button
-                  onClick={() => scrollTo(l.href.slice(1))}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-white/10 ${
+                <a
+                  href={l.href}
+                  onClick={(e) => { e.preventDefault(); scrollTo(l.href.slice(1)); }}
+                  className={`inline-block px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-white/10 ${
                     navScrolled ? "text-muted-foreground hover:text-primary hover:bg-primary/5" : "text-white/80 hover:text-white"
                   }`}
                 >
                   {l.label}
-                </button>
+                </a>
               </li>
             ))}
           </ul>
