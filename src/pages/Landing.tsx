@@ -880,8 +880,8 @@ const Landing = () => {
                 </p>
                 <p>
                   Email:{" "}
-                  <a href="mailto:royalplazahotelsdhanaura@gmail.com" className="hover:text-primary transition-colors">
-                    royalplazahotelsdhanaura@gmail.com
+                  <a href="mailto:ranaabhishek1988@gmail.com" className="hover:text-primary transition-colors">
+                    ranaabhishek1988@gmail.com
                   </a>
                 </p>
               </address>
