@@ -307,13 +307,14 @@ const Landing = () => {
               </div>
             )}
             {NAV_LINKS.map((l) => (
-              <button
+              <a
                 key={l.href}
-                onClick={() => scrollTo(l.href.slice(1))}
+                href={l.href}
+                onClick={(e) => { e.preventDefault(); scrollTo(l.href.slice(1)); }}
                 className="block w-full text-left px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
               >
                 {l.label}
-              </button>
+              </a>
             ))}
             <div className="pt-3 mt-3 border-t border-border/50 space-y-1">
               {user ? (
