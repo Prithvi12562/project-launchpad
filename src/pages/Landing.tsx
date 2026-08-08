@@ -46,14 +46,14 @@ const AMENITIES = [
 ];
 
 const GALLERY_IMAGES = [
-  { src: receptionImg, alt: "Hotel Reception" },
-  { src: hallwayImg, alt: "Hotel Hallway" },
-  { src: restaurantImg, alt: "Restaurant" },
-  { src: insideRoomImg, alt: "Room Interior" },
-  { src: bathroomImg, alt: "Bathroom" },
-  { src: room3Img, alt: "AC Room" },
-  { src: room4Img, alt: "Super Deluxe Room" },
-  { src: room2Img, alt: "Deluxe Room" },
+  { src: receptionImg, alt: "Reception lobby with seating at Royal Plaza Hotels Dhanaura, Barara", label: "Hotel Reception" },
+  { src: hallwayImg, alt: "Well-lit guest room hallway at Royal Plaza Hotels Dhanaura", label: "Hotel Hallway" },
+  { src: restaurantImg, alt: "In-house multi-cuisine restaurant dining area at Royal Plaza Hotels Dhanaura", label: "Restaurant" },
+  { src: insideRoomImg, alt: "Interior of a furnished guest room with double bed at Royal Plaza Hotels Dhanaura", label: "Room Interior" },
+  { src: bathroomImg, alt: "Clean modern attached bathroom in a guest room at Royal Plaza Hotels Dhanaura", label: "Bathroom" },
+  { src: room3Img, alt: "Air-conditioned AC room with double bed and TV at Royal Plaza Hotels Dhanaura", label: "AC Room" },
+  { src: room4Img, alt: "Super Deluxe AC room with premium furnishings at Royal Plaza Hotels Dhanaura", label: "Super Deluxe Room" },
+  { src: room2Img, alt: "Deluxe AC room with attached bathroom at Royal Plaza Hotels Dhanaura", label: "Deluxe Room" },
 ];
 
 const ROOM_TYPES = [
