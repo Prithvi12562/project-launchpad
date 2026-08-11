@@ -9,6 +9,6 @@
     <circle cx="256" cy="102" r="18"/>
     <circle cx="376" cy="136" r="16"/>
   </g>
-  <text x="256" y="360" text-anchor="middle" font-family="Georgia, 'DejaVu Serif', serif" font-weight="bold" font-size="76" fill="#C9A227" letter-spacing="1">Royal Plaza</text>
+  <text x="256" y="360" text-anchor="middle" font-family="Georgia, 'DejaVu Serif', serif" font-weight="bold" font-size="66" fill="#C9A227" letter-spacing="1">Royal Plaza</text>
   <text x="256" y="428" text-anchor="middle" font-family="Georgia, 'DejaVu Serif', serif" font-size="48" fill="#C9A227" letter-spacing="10">HOTELS</text>
 </svg>
