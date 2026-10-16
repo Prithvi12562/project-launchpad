@@ -376,7 +376,7 @@ const Landing = () => {
               <span className="block text-gradient-gold mt-2 text-2xl sm:text-3xl lg:text-4xl">Luxury Stay in Dhanaura, Barara</span>
             </h1>
 
-            <p className="text-base md:text-xl text-foreground font-medium max-w-2xl mx-auto leading-relaxed bg-background/80 backdrop-blur-sm rounded-md px-4 py-2">
+            <p className="text-base md:text-xl text-white max-w-2xl mx-auto leading-relaxed drop-shadow-lg">
               The best hotel in Dhanaura — luxury AC rooms, exquisite dining, and warm hospitality in Dhanaura, Barara, Ambala, Haryana.
             </p>
 
