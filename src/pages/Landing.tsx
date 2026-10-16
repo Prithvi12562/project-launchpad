@@ -351,7 +351,7 @@ const Landing = () => {
           <img
             src={exteriorImg}
             alt="Royal Plaza Hotel Dhanaura exterior - best hotel in Barara Ambala Haryana"
-            className="w-full h-full object-contain object-center"
+            className="w-full h-full object-cover object-center"
           />
         </div>
 
