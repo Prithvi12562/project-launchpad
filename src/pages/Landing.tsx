@@ -11,7 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   Wifi, Wind, Waves, UtensilsCrossed, Car, Building2, Star,
   Phone, Mail, MapPin, Clock, ChevronDown, Send, Menu, X,
-  Minus, Plus, IndianRupee, QrCode, Copy, Check, LogOut, User,
+  Minus, Plus, IndianRupee, Check, LogOut, User,
   ArrowRight, Sparkles, Crown,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -61,8 +61,6 @@ const ROOM_TYPES = [
   { id: "super-deluxe", name: "Super Deluxe Room", price: 4500, image: room4Img, description: "Premium AC room with swimming pool access, attached bathroom, TV, and luxury amenities.", bestSeller: true },
 ];
 
-const UPI_ID = "royalplazahotels@upi";
-
 /* ─── Intersection Observer hook for scroll animations ─── */
 const useInView = (threshold = 0.15) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -100,7 +98,6 @@ const Landing = () => {
   const [navScrolled, setNavScrolled] = useState(false);
   const [bookingSubmitting, setBookingSubmitting] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
-  const [upiCopied, setUpiCopied] = useState(false);
   const [bookingForm, setBookingForm] = useState({
     name: "", phone: "", email: "", checkIn: "", checkOut: "", guests: "1", requests: "",
   });
@@ -141,12 +138,6 @@ const Landing = () => {
     setMobileNavOpen(false);
   };
 
-  const copyUpi = async () => {
-    await navigator.clipboard.writeText(UPI_ID);
-    setUpiCopied(true);
-    setTimeout(() => setUpiCopied(false), 2000);
-  };
-
   const handleBooking = async () => {
     if (!bookingForm.name || !bookingForm.phone || !bookingForm.checkIn || !bookingForm.checkOut) {
       toast({ title: "Please fill all required fields", variant: "destructive" });
@@ -181,7 +172,7 @@ const Landing = () => {
       });
       if (error) throw error;
       setBookingSuccess(true);
-      toast({ title: "Booking request sent!", description: "Complete payment via UPI below." });
+      toast({ title: "Booking request sent!", description: "The hotel will contact you to confirm your stay." });
     } catch (e) {
       console.error(e);
       toast({ title: "Could not send booking", description: "Please try again or contact us.", variant: "destructive" });
@@ -604,7 +595,7 @@ const Landing = () => {
       <section id="booking" className="relative px-4 py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-secondary/30 to-transparent" />
         <div className="relative max-w-2xl mx-auto">
-          <SectionHeading tag="Reservation" title="Book Your Stay" subtitle="Select rooms, fill in details, and pay via UPI" />
+          <SectionHeading tag="Reservation" title="Book Your Stay" subtitle="Select rooms and send a booking request" />
 
           {!bookingSuccess ? (
             <Card className="border-border/60 shadow-2xl shadow-primary/5 rounded-3xl overflow-hidden">
@@ -715,38 +706,25 @@ const Landing = () => {
                   disabled={bookingSubmitting}
                 >
                   <Send className="h-4 w-4 mr-2" />
-                  {bookingSubmitting ? "Sending…" : "Confirm & Pay via UPI"}
+                  {bookingSubmitting ? "Sending…" : "Send Booking Request"}
                   <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </CardContent>
             </Card>
           ) : (
-            /* ─── UPI Payment Card ─── */
+            /* ─── Booking request confirmation ─── */
             <Card className="border-accent/30 shadow-2xl shadow-accent/10 rounded-3xl overflow-hidden">
               <CardContent className="p-6 md:p-10 space-y-6 text-center">
                 <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-green-500/10 text-green-600">
                   <Check className="h-5 w-5" />
-                  <h3 className="text-lg font-heading font-bold">Booking Confirmed!</h3>
+                  <h3 className="text-lg font-heading font-bold">Request Received!</h3>
                 </div>
                 <p className="text-muted-foreground">
-                  Please complete your payment of{" "}
-                  <span className="font-bold text-gradient-gold text-lg">₹{totalPrice.toLocaleString("en-IN")}</span>{" "}
-                  via UPI to confirm your reservation.
+                  Thank you for your booking request. Our team will contact you to confirm availability and discuss your stay.
                 </p>
 
-                <div className="mx-auto flex flex-col items-center gap-4 rounded-2xl border border-border/50 bg-white p-8 max-w-xs shadow-inner">
-                  <QrCode className="h-28 w-28 text-foreground/70" />
-                  <p className="text-xs text-muted-foreground">Scan with any UPI app</p>
-                  <div className="flex items-center gap-2 rounded-xl bg-secondary px-5 py-2.5">
-                    <span className="text-sm font-mono font-semibold text-foreground">{UPI_ID}</span>
-                    <button onClick={copyUpi} className="text-primary hover:text-primary/80 transition-colors" aria-label="Copy UPI ID">
-                      {upiCopied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
-                    </button>
-                  </div>
-                </div>
-
                 <div className="rounded-2xl bg-secondary/50 p-5 space-y-2 text-left">
-                  <p className="text-sm font-bold text-foreground">Payment Summary</p>
+                  <p className="text-sm font-bold text-foreground">Request Summary</p>
                   {ROOM_TYPES.map((room) =>
                     roomCounts[room.id] > 0 ? (
                       <div key={room.id} className="flex justify-between text-sm text-muted-foreground">
@@ -760,14 +738,6 @@ const Landing = () => {
                     <span className="text-primary">₹{totalPrice.toLocaleString("en-IN")}</span>
                   </div>
                 </div>
-
-                <p className="text-xs text-muted-foreground">
-                  After payment, send the screenshot to{" "}
-                  <a href="https://wa.me/918288808857" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">
-                    WhatsApp (+91 8288808857)
-                  </a>{" "}
-                  for instant confirmation.
-                </p>
 
                 <Button variant="outline" onClick={resetBooking} className="rounded-xl">
                   Make Another Booking
