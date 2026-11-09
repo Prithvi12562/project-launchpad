@@ -3,8 +3,12 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 import { brokeredPreviewStorage } from './previewAuthStorage';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+// Pinned to the hotel's own Supabase project (bhvkbgkdryaplqniwakj), where the
+// bookings table and send-booking-email function live. The .env file is
+// auto-rewritten by the platform connection, so it is not relied on here.
+const SUPABASE_URL = "https://bhvkbgkdryaplqniwakj.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJodmtiZ2tkcnlhcGxxbml3YWtqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIxNTMyOTYsImV4cCI6MjEwNzcyOTI5Nn0.b1Z_wHGQYIOWuIWRsB1nOqaFEy226MJMkhtVTO6Wgyo";
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";

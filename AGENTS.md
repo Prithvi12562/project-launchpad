@@ -1,3 +1,3 @@
 # Project Technical Decisions
 
-- Keep Supabase URL and publishable key in Vite environment variables so preview and deployed builds can target the intended project without embedding credentials in client code.
+- Pin the Supabase URL and publishable key in `src/integrations/supabase/client.ts` to the hotel's own project, because the platform connection auto-rewrites `.env` to a different project and breaks bookings.
